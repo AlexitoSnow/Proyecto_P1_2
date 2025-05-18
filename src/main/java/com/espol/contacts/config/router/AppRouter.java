@@ -14,19 +14,21 @@ public class AppRouter {
 
     private static Scene scene;
     private static final double WIDTH = 640;
-    private static final double HEIGTH = 480;
+    private static final double HEIGHT = 480;
     
     private AppRouter() {}
     
     /**
      * Launch the app in the parent route
-     * 
      * Declare the basic screen configuration that will be applied to the stage
      * @param stage to show the scenes
-     * @throws IOException
      */
-    public static void initStage(Stage stage) throws IOException {
-        scene = new Scene(loadFXML(Routes.LOGIN), WIDTH, HEIGTH);
+    public static void initStage(Stage stage) {
+        try {
+            scene = new Scene(loadFXML(Routes.LOGIN), WIDTH, HEIGHT);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed to load main view fxml", e.getMessage());
+        }
         stage.setScene(scene);
         stage.show();
     }
@@ -34,10 +36,13 @@ public class AppRouter {
     /**
      * Navigate to another screen with the given route
      * @param route to navigate
-     * @throws IOException
      */
-    public static void setRoot(String route) throws IOException {
-        scene.setRoot(loadFXML(route));
+    public static void setRoot(String route) {
+        try {
+            scene.setRoot(loadFXML(route));
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed to load FXML", e.getMessage());
+        }
     }
     
     private static Parent loadFXML(String fxml) throws IOException {
