@@ -9,5 +9,8 @@
         <module name="contacts-app" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="contacts-app (1)" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
