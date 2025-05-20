@@ -9,5 +9,5 @@ public class Routes {
     
     private Routes(){}
     
-    public static final String LOGIN = "login";
+    public static final String HOME = "homeScreen";
 }
