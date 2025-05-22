@@ -3,6 +3,7 @@ package com.espol.contacts.infrastructure.datasource;
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.domain.datasource.ContactsDatasource;
 import com.espol.contacts.domain.entity.Contact;
+import com.espol.contacts.domain.entity.Phone;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,23 +16,25 @@ public class ContactsDatasourceImpl implements ContactsDatasource {
         return List.of();
     }
 
-    // TODO: Llamar a deserializeFile() para obtener la lista
-    // TODO: Actualizar el filter para incluir el parámetro de búsqueda real
-    // TODO: Para esto, la clase Contact ya debe tener el atributo definido con el que se va a trabajar
-    // TODO: Ejemplo de búsqueda: c.getPhone() == phone (si el phone es numérico)
     @Override
-    public Optional<Contact> getByPhone(long phone) {
-        // La función retorna un valor opcional de contacto basado en la primera coincidencia del filter
-        //return contacts.stream().filter(c -> true).findFirst();
+    public Optional<Contact> getById(Long id) {
+        final List<Contact> contacts = deserializeFile();
+        return contacts.stream().filter(contact -> contact.getId().equals(id)).findFirst();
+    }
+
+    @Override
+    public Optional<Contact> getByPhone(String phone) {
+        final List<Contact> contacts = deserializeFile();
+        return contacts.stream().filter(c -> c.getPhones().contains(new Phone(null, phone))).findFirst();
     }
 
     // TODO: Serializar la lista actualizada con el nuevo contacto
     // TODO: Llamar a deserializeFile() para obtener la lista
     // TODO: Buscar el contacto en la lista
-    // TODO: Validar que el número no exista en otro contacto
+    // TODO: Validar que el número no exista en otro contacto (puedes usar getByPhone)
     // TODO: Si el número existe, lanzar la excepción personalizada DuplicatedContactException
-    // TODO: Si el contacto existe, actualizar la referencia
-    // TODO: Si el contacto no existe, agregarlo a la lista
+    // TODO: Si el contacto existe, actualizar la referencia (todo puede cambiar menos el Id)
+    // TODO: Si el contacto no existe, darle un nuevo id (generarlo como el siguiente número en la lista) y luego agregarlo a la lista
     // TODO: Retornar el mismo item recibido, esto sirve para actualizar la UI como validación de "contacto creado"
     // Como ven, la lógica para actualizar y agregar sigue el mismo flujo
     // hasta la búsqueda, por eso se considera un solo method para ambos casos
