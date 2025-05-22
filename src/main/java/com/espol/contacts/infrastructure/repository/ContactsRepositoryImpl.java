@@ -3,15 +3,16 @@ package com.espol.contacts.infrastructure.repository;
 import com.espol.contacts.domain.datasource.ContactsDatasource;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.repository.ContactsRepository;
-import com.espol.contacts.infrastructure.datasource.ContactsDatasourceImpl;
+import com.espol.contacts.infrastructure.datasource.DevContactsDatasourceImpl;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ContactsRepositoryImpl implements ContactsRepository {
     private final ContactsDatasource datasource;
 
     public ContactsRepositoryImpl() {
-        this.datasource = new ContactsDatasourceImpl();
+        this.datasource = new DevContactsDatasourceImpl();
     }
 
     @Override
@@ -20,8 +21,8 @@ public class ContactsRepositoryImpl implements ContactsRepository {
     }
 
     @Override
-    public Contact getById(long id) {
-        return datasource.getById(id);
+    public Optional<Contact> getByPhone(long phone) {
+        return datasource.getByPhone(phone);
     }
 
     @Override
