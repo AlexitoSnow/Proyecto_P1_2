@@ -1,8 +1,6 @@
 package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.AddressType;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -17,8 +15,7 @@ public class Address {
 
     private Address() {}
 
-    @Contract(value = " -> new", pure = true)
-    public static @NotNull Address build() {
+    public static Address build() {
         return new Address();
     }
 
