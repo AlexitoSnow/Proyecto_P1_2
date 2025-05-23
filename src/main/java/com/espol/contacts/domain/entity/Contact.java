@@ -8,6 +8,7 @@ import java.util.*;
 // TODO: Convertir subclases y clases que usa en serializable
 public class Contact {
     protected Long id;
+    protected final Set<Email> emails;
     protected final List<Phone> phones;
     protected final Set<Address> addresses;
     protected final Set<ImportantDate> dates;
@@ -18,6 +19,7 @@ public class Contact {
     protected Boolean favorite;
 
     protected Contact() {
+        emails = new HashSet<>();
         phones = new ArrayList<>();
         addresses = new HashSet<>();
         dates = new HashSet<>();
@@ -36,6 +38,11 @@ public class Contact {
 
     public Contact name(String name) {
         this.name = name;
+        return this;
+    }
+
+    public Contact addEmail(Email email) {
+        this.emails.add(email);
         return this;
     }
 
@@ -87,6 +94,10 @@ public class Contact {
     public Contact id(Long id) {
         this.id = id;
         return this;
+    }
+
+    public Set<Email> getEmails() {
+        return emails;
     }
 
     public List<Phone> getPhones() {
