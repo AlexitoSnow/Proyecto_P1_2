@@ -13,6 +13,14 @@ public class SocialMedia {
         this.platform = platform;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public SocialPlatform getPlatform() {
+        return platform;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
