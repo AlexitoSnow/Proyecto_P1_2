@@ -93,4 +93,43 @@ public class Address {
     public int hashCode() {
         return Objects.hashCode(type);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        java.util.List<String> addressParts = new java.util.ArrayList<>();
+        if (city != null) {
+            addressParts.add(city);
+        }
+        if (state != null) {
+            addressParts.add(state);
+        }
+        if (country != null) {
+            addressParts.add(country);
+        }
+
+        if (street != null) {
+            sb.append(street);
+            if (!addressParts.isEmpty()) {
+                sb.append(". ");
+            }
+        }
+
+        if (!addressParts.isEmpty()) {
+            sb.append(String.join(", ", addressParts));
+        }
+
+        if (sb.length() > 0 && postalCode != null) {
+            sb.append(". ");
+        } else if (sb.length() > 0 && postalCode == null) {
+            sb.append(".");
+        }
+
+        if (postalCode != null) {
+            sb.append(postalCode);
+        }
+
+        return sb.toString().trim();
+    }
 }

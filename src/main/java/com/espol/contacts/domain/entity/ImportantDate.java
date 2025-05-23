@@ -3,6 +3,7 @@ package com.espol.contacts.domain.entity;
 import com.espol.contacts.domain.entity.enums.DateType;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Objects;
 
 public class ImportantDate {
@@ -32,5 +33,10 @@ public class ImportantDate {
     @Override
     public int hashCode() {
         return Objects.hashCode(type);
+    }
+
+    @Override
+    public String toString() {
+        return date.format(new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter());
     }
 }
