@@ -3,10 +3,10 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 <?import org.kordamp.ikonli.javafx.*?>
-
-<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.controller.HomeController">
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.controller.HomeController">
    <top>
       <HBox alignment="CENTER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -18,9 +18,24 @@
                   <Font size="20.0" />
                </font>
             </Label>
-            <ButtonBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+            <Separator orientation="VERTICAL" />
+            <TextField promptText="Buscar contacto..." HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="4.0" />
+               </HBox.margin>
+            </TextField>
+            <Button mnemonicParsing="false" styleClass="text-icon-button">
+               <graphic>
+                  <FontIcon iconLiteral="fas-search" />
+               </graphic>
+               <HBox.margin>
+                  <Insets left="4.0" right="4.0" />
+               </HBox.margin>
+            </Button>
+            <Separator orientation="VERTICAL" HBox.hgrow="NEVER" />
+            <ButtonBar prefHeight="40.0" prefWidth="85.0" HBox.hgrow="NEVER">
               <buttons>
-                  <MenuButton fx:id="createButton" mnemonicParsing="false">
+                  <MenuButton fx:id="createButton" mnemonicParsing="false" styleClass="text-icon-button">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Persona">
                            <graphic>
@@ -32,7 +47,7 @@
                            </graphic></MenuItem>
                     </items>
                      <graphic>
-                        <FontIcon iconLiteral="fas-user-plus" iconSize="20" />
+                        <FontIcon iconLiteral="fas-user-plus" iconSize="20" text="" />
                      </graphic>
                   </MenuButton>
               </buttons>
@@ -75,7 +90,26 @@
                      <graphic>
                         <FontIcon iconLiteral="fas-users" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Mostrar" />
+                     </tooltip>
                   </MenuButton>
+                  <Button fx:id="sortButton" mnemonicParsing="false" onMouseClicked="#onSortMenuRequested" styleClass="text-icon-button">
+                     <graphic>
+                        <FontIcon iconLiteral="mdmz-sort" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Ordenar por" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="filterButton" mnemonicParsing="false" onMouseClicked="#onFilterMenuRequested" styleClass="text-icon-button">
+                     <graphic>
+                        <FontIcon iconLiteral="mdal-filter_alt" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Filtrar por" />
+                     </tooltip>
+                  </Button>
                </children>
             </HBox>
             <ListView fx:id="contactsListView" VBox.vgrow="ALWAYS" />
