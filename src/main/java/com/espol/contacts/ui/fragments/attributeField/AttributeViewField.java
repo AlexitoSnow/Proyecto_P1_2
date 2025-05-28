@@ -1,4 +1,4 @@
-package com.espol.contacts.ui.fragments;
+package com.espol.contacts.ui.fragments.attributeField;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -9,9 +9,9 @@ import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-public class AttributeField extends Button {
+public class AttributeViewField extends Button {
 
-    public AttributeField(String attributeName, String attributeValue, Ikon trailingIcon) {
+    public AttributeViewField(String attributeName, String attributeValue, Ikon trailingIcon) {
         final Label nameText = new Label(attributeName);
         final Label valueText = new Label(attributeValue);
 
