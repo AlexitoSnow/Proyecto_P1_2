@@ -1,5 +1,7 @@
 package com.espol.contacts.ui.controller;
 
+import com.espol.contacts.config.router.AppRouter;
+import com.espol.contacts.config.router.Routes;
 import com.espol.contacts.domain.entity.Company;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Person;
@@ -115,7 +117,13 @@ public class HomeController implements Initializable {
     }
 
     void onCreate(ContactType contactType) {
-        mainPane.setCenter(new ContactForm());
+        AppRouter.setRoot(Routes.REGISTER_CONTACT, contactType);
+//        ScrollPane centerPane = new ScrollPane();
+//        centerPane.setFitToHeight(true);
+//        centerPane.setFitToWidth(true);
+//        ContactForm contactForm = new ContactForm(contactType);
+//        centerPane.setContent(contactForm);
+//        mainPane.setCenter(centerPane);
     }
 
     void onApplyFilter(String text, Ikon icon) {
@@ -144,21 +152,25 @@ public class HomeController implements Initializable {
     @FXML
     void goNext(ActionEvent event) {
         final int selected = contactsListView.getSelectionModel().getSelectedIndex();
-        if (selected == contactsListView.getItems().size() - 1) {
-            contactsListView.getSelectionModel().selectFirst();
-        } else {
-            contactsListView.getSelectionModel().selectNext();
-        }
+        Platform.runLater(() -> {
+            if (selected == contactsListView.getItems().size() - 1) {
+                contactsListView.getSelectionModel().selectFirst();
+            } else {
+                contactsListView.getSelectionModel().selectNext();
+            }
+        });
     }
 
     @FXML
     void goPrevious(ActionEvent event) {
         final int selected = contactsListView.getSelectionModel().getSelectedIndex();
-        if (selected == 0) {
-            contactsListView.getSelectionModel().selectLast();
-        } else {
-            contactsListView.getSelectionModel().selectPrevious();
-        }
+        Platform.runLater(() -> {
+            if (selected == 0) {
+                contactsListView.getSelectionModel().selectLast();
+            } else {
+                contactsListView.getSelectionModel().selectPrevious();
+            }
+        });
     }
 
     @FXML
