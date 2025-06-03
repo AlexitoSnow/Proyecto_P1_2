@@ -1,6 +1,7 @@
 package com.espol.contacts.ui.fragments;
 
 import com.espol.contacts.domain.entity.Contact;
+import com.espol.contacts.domain.entity.Person;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import javafx.geometry.Insets;
@@ -106,8 +107,8 @@ public class ContactActionView extends HBox {
     private VBox getRelatedContacts() {
         final VBox relatedContacts = new VBox();
         final Label titleText = new Label("Contactos Relacionados");
-        var box = new RelatedContactCell(Contact.build().name("Persona 1"));
-        var box2 = new RelatedContactCell(Contact.build().name("Persona 2"));
+        var box = new RelatedContactCell(Person.builder().name("Persona 1").build());
+        var box2 = new RelatedContactCell(Person.builder().name("Persona 2").build());
         relatedContacts.getChildren().addAll(titleText, box, box2);
         return relatedContacts;
     }

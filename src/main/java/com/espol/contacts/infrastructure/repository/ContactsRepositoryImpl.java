@@ -14,7 +14,7 @@ public class ContactsRepositoryImpl implements ContactsRepository {
     private final ContactsDatasource datasource;
 
     public ContactsRepositoryImpl() {
-        this.datasource = new DevContactsDatasourceImpl();
+        this.datasource = DevContactsDatasourceImpl.getInstance();
     }
 
     @Override
