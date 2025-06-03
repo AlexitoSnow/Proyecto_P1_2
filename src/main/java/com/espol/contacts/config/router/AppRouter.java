@@ -2,6 +2,7 @@ package com.espol.contacts.config.router;
 
 import com.espol.contacts.App;
 import com.espol.contacts.config.constants.Constants;
+import com.espol.contacts.ui.controller.DataInitializable;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,7 +28,7 @@ public class AppRouter {
      */
     public static void initStage(Stage stage) {
         try {
-            scene = new Scene(loadFXML(Routes.HOME), WIDTH, HEIGHT);
+            scene = new Scene(loadFXML(Routes.HOME).load(), WIDTH, HEIGHT);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed to load main view fxml\nMessage: {0}", e.getMessage());
         }
@@ -43,15 +44,34 @@ public class AppRouter {
      */
     public static void setRoot(String route) {
         try {
-            scene.setRoot(loadFXML(route));
+            scene.setRoot(loadFXML(route).load());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed to load FXML", e.getMessage());
+        }
+    }
+
+    /**
+     * Navigate to another screen with the given route
+     * @param route to navigate
+     */
+    public static <T> void setRoot(String route, T data) {
+        try {
+            FXMLLoader loader = loadFXML(route);
+            Parent parent = loader.load();
+            Object controller = loader.getController();
+            if (controller instanceof DataInitializable) {
+                ((DataInitializable<T>) controller).initData(data);
+            }
+
+            scene.setRoot(parent);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed to load FXML", e.getMessage());
         }
     }
     
-    private static Parent loadFXML(String fxml) throws IOException {
+    private static FXMLLoader loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ui/screens/" + fxml + ".fxml"));
         log.log(Level.INFO, "Navigate to {0}", fxml);
-        return fxmlLoader.load();
+        return fxmlLoader;
     }
 }

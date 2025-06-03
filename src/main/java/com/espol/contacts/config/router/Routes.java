@@ -10,4 +10,5 @@ public class Routes {
     private Routes(){}
     
     public static final String HOME = "homeScreen";
+    public static final String REGISTER_CONTACT = "registerContactScreen";
 }
