@@ -14,9 +14,9 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 public class ContactListTile extends HBox {
-    private Label nameLabel;
-    private Node leading;
-    private FontIcon trailingIcon;
+    private final Label nameLabel;
+    private final Node leading;
+    private final FontIcon trailingIcon;
 
     public ContactListTile(String contactName, String imageUrl, EventHandler<MouseEvent> onPressed) {
         nameLabel = new Label(contactName);

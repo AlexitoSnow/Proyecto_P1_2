@@ -22,6 +22,8 @@ import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2AL;
+import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -154,22 +156,11 @@ public class ContactForm extends VBox {
         );
 
         Platform.runLater(nameField::requestFocus);
-
-        final Button saveButton = new Button("Guardar", new FontIcon(FontAwesomeSolid.SAVE));
-        saveButton.setOnAction(e -> {
-            if (buildContact()) saveContact();
-        });
-        this.getChildren().add(saveButton);
     }
 
-    public void saveContact() {
-        repository.save(contact);
-        this.getChildren().clear();
-        Notifications.create()
-                .title("Info: Creación de contacto")
-                .text("Contacto creado")
-                .graphic(new FontIcon(FontAwesomeSolid.CHECK_CIRCLE))
-                .show();
+    public Contact getContact() {
+        if (buildContact()) return contact;
+        return null;
     }
 
     private boolean buildContact() {

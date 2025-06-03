@@ -17,7 +17,7 @@ import static org.kordamp.ikonli.material2.Material2MZ.REMOVE;
  * TODO: Not ready for production (Mock only)
  */
 public class RelatedContactCell extends HBox {
-    private Contact contact;
+    private final Contact contact;
     private final ImageView contactImage;
     private final IconButton trailingButton;
     private final Label title;

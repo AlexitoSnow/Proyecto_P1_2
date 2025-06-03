@@ -22,7 +22,7 @@ import static org.kordamp.ikonli.material2.Material2MZ.MORE_VERT;
 
 public class ContactCell extends ListCell<Contact> {
     private static final Logger LOGGER = Logger.getLogger(ContactCell.class.getName());
-    private HBox container;
+    private final HBox container;
     private final ContactContextMenu contactContextMenu;
     private final ContactsRepository repository;
     private final IconButton trailing;

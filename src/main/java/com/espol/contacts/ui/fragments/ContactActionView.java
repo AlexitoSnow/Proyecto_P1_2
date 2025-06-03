@@ -25,8 +25,8 @@ import static org.kordamp.ikonli.material2.Material2AL.ARROW_FORWARD_IOS;
 // TODO: Implementar
 public class ContactActionView extends HBox {
     private final Logger logger = Logger.getLogger(ContactActionView.class.getName());
-    private Contact contact;
-    private ContactsRepository repository;
+    private final Contact contact;
+    private final ContactsRepository repository;
     private final ToggleButton favoriteButton;
     private final Button editButton;
     private final Button deleteButton;
