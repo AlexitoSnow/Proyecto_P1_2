@@ -28,7 +28,7 @@ public class AppRouter {
      */
     public static void initStage(Stage stage) {
         try {
-            scene = new Scene(loadFXML(Routes.HOME).load(), WIDTH, HEIGHT);
+            scene = new Scene(loadFXML(Routes.LOGIN).load(), WIDTH, HEIGHT);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed to load main view fxml\nMessage: {0}", e.getMessage());
         }
