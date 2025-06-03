@@ -9,98 +9,99 @@ import java.util.*;
 public class Contact {
     protected Long id;
     protected final Set<Email> emails;
-    protected final List<Phone> phones;
+    protected final Set<Phone> phones;
     protected final Set<Address> addresses;
     protected final Set<ImportantDate> dates;
-    protected final List<SocialMedia> socialMedias;
+    protected final Set<SocialMedia> socialMedias;
     protected String name;
     protected String notes;
     protected ContactType contactType;
     protected Boolean favorite;
 
-    protected Contact() {
-        emails = new HashSet<>();
-        phones = new ArrayList<>();
-        addresses = new HashSet<>();
-        dates = new HashSet<>();
-        socialMedias = new ArrayList<>();
-        favorite = false;
+    protected Contact(ContactBuilder<?> builder) {
+        this.id = builder.id;
+        this.emails = builder.emails;
+        this.phones = builder.phones;
+        this.addresses = builder.addresses;
+        this.dates = builder.dates;
+        this.socialMedias = builder.socialMedias;
+        this.name = builder.name;
+        this.notes = builder.notes;
+        this.contactType = builder.contactType;
+        this.favorite = builder.favorite;
     }
 
-    public static Contact build() {
-        return new Contact();
-    }
+    public static abstract class ContactBuilder<T extends ContactBuilder<T>> {
+        protected Long id;
+        protected Set<Email> emails = new HashSet<>();
+        protected Set<Phone> phones = new HashSet<>();
+        protected Set<Address> addresses = new HashSet<>();
+        protected Set<ImportantDate> dates = new HashSet<>();
+        protected Set<SocialMedia> socialMedias = new HashSet<>();
+        protected String name;
+        protected String notes;
+        protected ContactType contactType;
+        protected Boolean favorite = false;
 
-    public Contact favorite(Boolean favorite) {
-        this.favorite = favorite;
-        return this;
-    }
+        public T id(Long id) {
+            this.id = id;
+            return self();
+        }
 
-    public Contact name(String name) {
-        this.name = name;
-        return this;
-    }
+        public T name(String name) {
+            this.name = name;
+            return self();
+        }
 
-    public Contact addEmail(Email email) {
-        this.emails.add(email);
-        return this;
-    }
+        public T addEmail(Email email) {
+            this.emails.add(email);
+            return self();
+        }
 
-    public Contact addPhone(Phone phone) {
-        this.phones.add(phone);
-        return this;
-    }
+        public T addPhone(Phone phone) {
+            this.phones.add(phone);
+            return self();
+        }
 
-    public Contact addAddress(Address address) {
-        this.addresses.add(address);
-        return this;
-    }
+        public T addAddress(Address address) {
+            this.addresses.add(address);
+            return self();
+        }
 
-    public Contact removeAddress(Address address) {
-        this.addresses.remove(address);
-        return this;
-    }
+        public T addDate(ImportantDate date) {
+            this.dates.add(date);
+            return self();
+        }
 
-    public Contact addDate(ImportantDate date) {
-        this.dates.add(date);
-        return this;
-    }
+        public T addSocialMedia(SocialMedia socialMedia) {
+            this.socialMedias.add(socialMedia);
+            return self();
+        }
 
-    public Contact removeDate(ImportantDate date) {
-        this.dates.remove(date);
-        return this;
-    }
+        public T notes(String notes) {
+            this.notes = notes;
+            return self();
+        }
 
-    public Contact addSocialMedia(SocialMedia socialMedia) {
-        this.socialMedias.add(socialMedia);
-        return this;
-    }
+        public T contactType(ContactType contactType) {
+            this.contactType = contactType;
+            return self();
+        }
 
-    public Contact removeSocialMedia(SocialMedia socialMedia) {
-        this.socialMedias.remove(socialMedia);
-        return this;
-    }
+        public T favorite(Boolean favorite) {
+            this.favorite = favorite;
+            return self();
+        }
 
-    public Contact notes(String notes) {
-        this.notes = notes;
-        return this;
-    }
-
-    public Contact contactType(ContactType contactType) {
-        this.contactType = contactType;
-        return this;
-    }
-
-    public Contact id(Long id) {
-        this.id = id;
-        return this;
+        protected abstract T self();
+        public abstract Contact build();
     }
 
     public Set<Email> getEmails() {
         return emails;
     }
 
-    public List<Phone> getPhones() {
+    public Set<Phone> getPhones() {
         return phones;
     }
 
@@ -112,7 +113,7 @@ public class Contact {
         return dates;
     }
 
-    public List<SocialMedia> getSocialMedias() {
+    public Set<SocialMedia> getSocialMedias() {
         return socialMedias;
     }
 
@@ -134,6 +135,10 @@ public class Contact {
 
     public boolean isFavorite() {
         return favorite;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
