@@ -7,8 +7,10 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.Objects;
 
 public class ImportantDate {
-    private final LocalDate date;
-    private final DateType type;
+    private LocalDate date;
+    private DateType type;
+
+    public ImportantDate() {}
 
     public ImportantDate(LocalDate date, DateType type) {
         this.date = date;
@@ -23,16 +25,24 @@ public class ImportantDate {
         return type;
     }
 
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setType(DateType type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ImportantDate that = (ImportantDate) o;
-        return type == that.type;
+        return Objects.equals(date, that.date) && type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(type);
+        return Objects.hash(date, type);
     }
 
     @Override
