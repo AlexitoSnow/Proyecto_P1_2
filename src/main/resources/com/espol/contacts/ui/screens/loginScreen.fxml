@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="16.0" xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.controller.LoginController">
+   <padding>
+      <Insets bottom="64.0" left="64.0" right="64.0" top="64.0"/>
+   </padding>
+   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="¡Bienvenido a tu Libreta de Contactos!"/>
+   <Region prefHeight="200.0" prefWidth="200.0"/>
+   <TextField/>
+   <TextField/>
+   <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" text="Iniciar Sesión"/>
+   <HBox alignment="CENTER" spacing="4.0">
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="¿No tienes una cuenta?"/>
+      <Button mnemonicParsing="false" onAction="#signUp" styleClass="text-icon-button" text="Registrate"/>
+   </HBox>
+</VBox>
