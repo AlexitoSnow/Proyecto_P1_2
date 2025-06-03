@@ -184,5 +184,10 @@ public class HomeController implements Initializable {
         SortMenu menu = new SortMenu();
         menu.show(sortButton, event.getScreenX(), event.getScreenY());
     }
+
+    @FXML
+    void logOut(ActionEvent event) {
+        AppRouter.setRoot(Routes.LOGIN);
+    }
     
 }
