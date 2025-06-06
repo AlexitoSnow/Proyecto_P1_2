@@ -1,22 +1,26 @@
 package com.espol.contacts.infrastructure.datasource;
 
+import com.espol.contacts.config.utils.ArrayList;
+import com.espol.contacts.config.utils.List;
 import com.espol.contacts.domain.datasource.BaseDatasource;
-import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.User;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.logging.Logger;
 
 public class UsersDatasource implements BaseDatasource<User> {
 
     private static UsersDatasource instance;
+    private final List<User> users;
+
+    private static final Logger LOGGER = Logger.getLogger(UsersDatasource.class.getName());
 
     private UsersDatasource() {
-        // Constructor privado para evitar instanciación externa
+        this.users = new ArrayList<>();
     }
 
     public static UsersDatasource getInstance() {
         if (instance == null) {
+            LOGGER.info("Opening UsersDatasource");
             instance = new UsersDatasource();
         }
         return instance;
@@ -24,26 +28,17 @@ public class UsersDatasource implements BaseDatasource<User> {
 
     @Override
     public List<User> getAll() {
-        return List.of();
+        return users;
     }
 
     @Override
-    public Optional<User> getById(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<User> getByPhone(String phone) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Contact save(User entity) {
-        return null;
+    public User save(User entity) {
+        return users.addLast(entity) ? entity : null;
     }
 
     @Override
     public void delete(User entity) {
-
+        users.remove(entity);
     }
+
 }
