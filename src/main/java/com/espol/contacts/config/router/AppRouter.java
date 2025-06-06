@@ -48,6 +48,7 @@ public class AppRouter {
             scene.setRoot(loadFXML(route).load());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed to load FXML", e.getMessage());
+            e.printStackTrace();
         }
     }
 

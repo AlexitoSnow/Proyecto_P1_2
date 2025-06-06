@@ -2,6 +2,8 @@ package com.espol.contacts.ui.screens;
 
 import com.espol.contacts.config.router.*;
 
+import com.espol.contacts.domain.repository.UsersRepository;
+import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.attributeField.SimpleFormField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,6 +27,11 @@ public class LoginScreen implements Initializable {
     private VBox container;
     private SimpleFormField userField;
     private SimpleFormField passwordField;
+    private final UsersRepository repository;
+
+    public LoginScreen() {
+        repository = UsersRepositoryImpl.getInstance();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -57,8 +64,21 @@ public class LoginScreen implements Initializable {
                     return;
                 }
             }
-        // TODO: Handle LOGIN
-        AppRouter.setRoot(Routes.HOME);
+        String username = userField.getValue();
+        String password = passwordField.getValue();
+        if (repository.login(username, password)) {
+            AppRouter.setRoot(Routes.HOME);
+        } else {
+            Notifications.create()
+                    .title("Error de inicio de sesión")
+                    .text("Usuario o contraseña incorrectos")
+                    .graphic(new FontIcon(EXCLAMATION_TRIANGLE))
+                    .show();
+            userField.setValue(null);
+            passwordField.setValue(null);
+            userField.requestFocus();
+        }
+
     }
 
     @FXML
