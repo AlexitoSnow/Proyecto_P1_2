@@ -2,6 +2,9 @@ package com.espol.contacts.ui.screens;
 
 import com.espol.contacts.config.router.*;
 
+import com.espol.contacts.domain.entity.User;
+import com.espol.contacts.domain.repository.UsersRepository;
+import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.attributeField.SimpleFormField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,7 +15,6 @@ import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.kordamp.ikonli.fontawesome6.FontAwesomeRegular.USER;
@@ -28,6 +30,11 @@ public class RegisterScreen implements Initializable {
     private SimpleFormField email;
     private SimpleFormField password;
     private SimpleFormField confirmPassword;
+    private final UsersRepository repository;
+
+    public RegisterScreen() {
+        repository = UsersRepositoryImpl.getInstance();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -46,7 +53,10 @@ public class RegisterScreen implements Initializable {
         password.setOnAction(this::register);
         confirmPassword.setOnAction(this::register);
 
-        container.getChildren().addAll(2, List.of(username, email, password, confirmPassword));
+        container.getChildren().add(2, username);
+        container.getChildren().add(3, email);
+        container.getChildren().add(4, password);
+        container.getChildren().add(5, confirmPassword);
     }
 
     @FXML
@@ -70,7 +80,27 @@ public class RegisterScreen implements Initializable {
             }
         }
 
-        // TODO: Handle Register
-        AppRouter.setRoot(Routes.HOME);
+        String usernameValue = username.getValue();
+        String emailValue = email.getValue();
+        String passwordValue = password.getValue();
+        if (repository.register(new User(usernameValue, emailValue, passwordValue))) {
+            Notifications.create()
+                    .title("Registro exitoso")
+                    .text("Usuario registrado correctamente")
+                    .graphic(new FontIcon(USER))
+                    .show();
+            AppRouter.setRoot(Routes.HOME);
+        } else {
+            Notifications.create()
+                    .title("Error de registro")
+                    .text("El nombre de usuario o el correo electrónico ya están en uso")
+                    .graphic(new FontIcon(EXCLAMATION_TRIANGLE))
+                    .show();
+            username.setValue(null);
+            email.setValue(null);
+            password.setValue(null);
+            confirmPassword.setValue(null);
+            username.requestFocus();
+        }
     }
 }

@@ -2,34 +2,29 @@ package com.espol.contacts.ui.screens;
 
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.router.*;
+import com.espol.contacts.config.utils.ArrayList;
+import com.espol.contacts.config.utils.List;
 import com.espol.contacts.config.utils.observer.Observer;
 import com.espol.contacts.domain.entity.*;
 import com.espol.contacts.domain.entity.enums.ContactType;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
+import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.*;
 import com.espol.contacts.ui.fragments.home.ContactCell;
 import com.espol.contacts.ui.fragments.home.ExtraInfoView;
 import com.espol.contacts.ui.fragments.home.SearchField;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -54,7 +49,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
     private SearchField searchField;
 
     private final ContactsRepository repository;
-    private ObservableList<Contact> allContactsData;
+    private List<Contact> allContactsData;
     private Predicate<Contact> currentFilterPredicate;
     private Predicate<Contact> currentSearchPredicate;
     private Comparator<Contact> currentSortComparator;
@@ -63,7 +58,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
 
     public HomeScreen() {
         this.repository = ContactsRepositoryImpl.getInstance();
-        allContactsData = FXCollections.observableArrayList(repository.getAll());
+        allContactsData = repository.getAll();
         repository.addObserver(this);
         currentFilterPredicate = c -> true;
         currentSearchPredicate = c -> true;
@@ -116,9 +111,12 @@ public class HomeScreen implements Initializable, Observer<Contact> {
             contactsListView.getChildren().clear();
 
 
-            List<Contact> filtered = allContactsData.stream()
-                    .filter(currentFilterPredicate.and(currentSearchPredicate))
-                    .collect(java.util.ArrayList::new, java.util.ArrayList::add, java.util.ArrayList::addAll);
+            List<Contact> filtered = new ArrayList<>();
+            for (Contact contact : allContactsData) {
+                if (currentFilterPredicate.test(contact) && currentSearchPredicate.test(contact)) {
+                    filtered.addLast(contact);
+                }
+            }
 
             if (currentSortComparator != null) {
                 filtered.sort(currentSortComparator);
@@ -229,6 +227,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
     @FXML
     void logOut(ActionEvent event) {
         repository.removeObserver(this);
+        UsersRepositoryImpl.getInstance().logout();
         AppRouter.setRoot(Routes.LOGIN);
     }
 
@@ -236,8 +235,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
     public void update(Contact contact) {
         LOGGER.info("ContactsRepository updated, refreshing contacts list.");
         Platform.runLater(() -> {
-            List<Contact> updated = repository.getAll();
-            allContactsData.setAll(updated);
+            allContactsData = repository.getAll();
             displayContacts(contact == null);
         });
     }

@@ -1,18 +1,17 @@
 package com.espol.contacts.infrastructure.datasource;
 
+import com.espol.contacts.config.utils.CircularDoublyLinkedList;
+import com.espol.contacts.config.utils.List;
 import com.espol.contacts.domain.datasource.BaseDatasource;
 import com.espol.contacts.domain.entity.*;
 import com.espol.contacts.domain.entity.enums.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Logger;
 
 public class DevContactsDatasource implements BaseDatasource<Contact> {
-    private final List<Contact> contacts = new ArrayList<>();
+    private final List<Contact> contacts = new CircularDoublyLinkedList<>();
     private final Logger LOGGER = Logger.getLogger(DevContactsDatasource.class.getName());
     private static DevContactsDatasource instance;
 
@@ -31,7 +30,7 @@ public class DevContactsDatasource implements BaseDatasource<Contact> {
             LOGGER.info("Creando lista falsa");
             for (int i = 0; i < 5; i++) {
                 final int type = new Random().nextInt(2);
-                contacts.add(type == 0 ? Person
+                contacts.addLast(type == 0 ? Person
                         .builder()
                         .id((long) i)
                         .middleName("Alexito")
@@ -62,24 +61,17 @@ public class DevContactsDatasource implements BaseDatasource<Contact> {
     }
 
     @Override
-    public Optional<Contact> getById(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Contact> getByPhone(String phone) {
-        return Optional.empty();
-    }
-
-    @Override
     public Contact save(Contact contact) {
-        if (contacts.contains(contact)) {
-            contacts.set(contacts.indexOf(contact), contact);
-            LOGGER.info("Actualizando contacto ID: " + contact.getId());
-            return contact;
+        for (int i = 0; i < contacts.size(); i++) {
+            Contact c = contacts.get(i);
+            if (c.equals(contact)) {
+                contacts.set(i, contact);
+                LOGGER.info("Actualizando contacto ID: " + contact.getId());
+                return contact;
+            }
         }
         contact.setId(contacts.size() + 1L);
-        contacts.add(contact);
+        contacts.addLast(contact);
         LOGGER.info("Guardando contacto ID: " + contact.getId());
         return contact;
     }
