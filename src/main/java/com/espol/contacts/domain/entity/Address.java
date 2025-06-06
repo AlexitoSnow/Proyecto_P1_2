@@ -99,21 +99,18 @@ public class Address {
         StringBuilder sb = new StringBuilder();
 
         java.util.List<String> addressParts = new java.util.ArrayList<>();
-        if (city != null) {
+        if (city != null && !city.isEmpty()) {
             addressParts.add(city);
         }
-        if (state != null) {
+        if (state != null && !state.isEmpty()) {
             addressParts.add(state);
         }
-        if (country != null) {
+        if (country != null && !country.isEmpty()) {
             addressParts.add(country);
         }
 
-        if (street != null) {
-            sb.append(street);
-            if (!addressParts.isEmpty()) {
-                sb.append(". ");
-            }
+        if (street != null && !street.isEmpty()) {
+            addressParts.add(street);
         }
 
         if (!addressParts.isEmpty()) {
@@ -122,14 +119,12 @@ public class Address {
 
         if (sb.length() > 0 && postalCode != null) {
             sb.append(". ");
-        } else if (sb.length() > 0 && postalCode == null) {
-            sb.append(".");
         }
 
         if (postalCode != null) {
             sb.append(postalCode);
         }
 
-        return sb.toString().trim();
+        return sb.toString();
     }
 }

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<fx:root fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" type="ScrollPane" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0">
+         <children>
+            <StackPane fx:id="profilePicture" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#onEditProfile">
+               <children>
+                  <FontIcon iconLiteral="fas-user-circle" iconSize="60" />
+                  <FontIcon fx:id="editProfileButton" iconLiteral="fas-edit" StackPane.alignment="BOTTOM_RIGHT" />
+               </children>
+            </StackPane>
+            <HBox fx:id="quickActionsToolbar" alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="8.0" VBox.vgrow="NEVER">
+               <children>
+                  <ToggleButton fx:id="favoriteButton" mnemonicParsing="false" onAction="#onToggleFavorite" text="Favorito">
+                     <graphic>
+                        <FontIcon fx:id="favoriteIcon" iconLiteral="far-star" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ToggleButton>
+                  <Button mnemonicParsing="false" onAction="#goToEdit" styleClass="text-icon-button" text="Editar">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-edit" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#onDelete" styleClass="text-icon-button" text="Eliminar">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-trash" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </HBox>
+            <StackPane maxHeight="1.7976931348623157E308">
+               <children>
+                  <TitledPane fx:id="galleryTitlePane" expanded="false" text="Galería">
+                     <content>
+                        <FlowPane fx:id="imageGallery" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rowValignment="TOP" />
+                     </content>
+                  </TitledPane>
+                  <Button fx:id="galleryButton" mnemonicParsing="false" onAction="#onAddGallery" styleClass="text-icon-button" StackPane.alignment="TOP_RIGHT">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-plus" />
+                     </graphic>
+                     <StackPane.margin>
+                        <Insets right="4.0" top="4.0" />
+                     </StackPane.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </StackPane>
+            <StackPane maxHeight="1.7976931348623157E308">
+               <children>
+                  <TitledPane fx:id="relatedTitlePane" expanded="false" text="Contactos Relacionados">
+                     <content>
+                        <VBox fx:id="relatedContacts" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="4.0">
+                           <padding>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </padding></VBox>
+                     </content>
+                  </TitledPane>
+                  <Button fx:id="relatedContactsButton" mnemonicParsing="false" onAction="#onAddRelated" styleClass="text-icon-button" StackPane.alignment="TOP_RIGHT">
+                     <graphic>
+                        <FontIcon iconLiteral="fas-plus" />
+                     </graphic>
+                     <StackPane.margin>
+                        <Insets right="4.0" top="4.0" />
+                     </StackPane.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </StackPane>
+         </children>
+         <padding>
+            <Insets bottom="8.0" right="12.0" top="8.0" />
+         </padding>
+      </VBox>
+   </content>
+</fx:root>

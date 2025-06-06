@@ -1,14 +1,14 @@
 package com.espol.contacts.infrastructure.datasource;
 
 import com.espol.contacts.config.constants.Constants;
-import com.espol.contacts.domain.datasource.ContactsDatasource;
+import com.espol.contacts.domain.datasource.BaseDatasource;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Phone;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ContactsDatasourceImpl implements ContactsDatasource {
+public class ContactsDatasource implements BaseDatasource<Contact> {
 
     // TODO: Llamar a deserializeFile()
     @Override

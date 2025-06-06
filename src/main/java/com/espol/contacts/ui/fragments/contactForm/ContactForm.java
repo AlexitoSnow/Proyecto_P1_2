@@ -4,10 +4,7 @@ import com.espol.contacts.domain.entity.*;
 import com.espol.contacts.domain.entity.enums.*;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
-import com.espol.contacts.ui.fragments.attributeField.BaseFormField;
-import com.espol.contacts.ui.fragments.attributeField.DateFormField;
-import com.espol.contacts.ui.fragments.attributeField.SimpleFormField;
-import com.espol.contacts.ui.fragments.attributeField.TypeFormField;
+import com.espol.contacts.ui.fragments.attributeField.*;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -34,7 +31,6 @@ public class ContactForm extends VBox {
     private final Logger LOGGER = Logger.getLogger(ContactForm.class.getName());
     private final ContactType contactType;
     private Contact contact;
-    private final ContactsRepository repository;
 
     // Campos básicos
     private SimpleFormField nameField;
@@ -49,10 +45,18 @@ public class ContactForm extends VBox {
     private final TitledPane datesTitledPane;
     private final TitledPane socialMediaTitledPane;
 
+    public ContactForm(Contact contact) {
+        this(contact.getContactType(), contact);
+    }
 
     public ContactForm(ContactType contactType) {
-        repository = new ContactsRepositoryImpl();
+        this(contactType, null);
+    }
+
+    private ContactForm(ContactType contactType, Contact contactToEdit) {
         this.contactType = contactType;
+        this.contact = contactToEdit;
+
         this.setSpacing(10);
         this.setPadding(new Insets(16));
         this.setAlignment(Pos.CENTER);
@@ -63,6 +67,8 @@ public class ContactForm extends VBox {
         socialMediaTitledPane = buildTitledPane("Redes Sociales");
 
         initializeForm();
+
+        if (this.contact != null) loadContactData();
     }
 
     private TitledPane buildTitledPane(String title) {
@@ -79,10 +85,11 @@ public class ContactForm extends VBox {
         button.setTooltip(new Tooltip("Agregar " + titledPane.getText()));
         button.setOnAction(e -> {
             final HBox row = new HBox(4);
-            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.MINUS));
             removeButton.getStyleClass().add("text-icon-button");
             BaseFormField field;
-            removeButton.setTooltip(new Tooltip("Eliminar"));
+            removeButton.setCursor(Cursor.HAND);
+            removeButton.setTooltip(new Tooltip("Remover"));
             removeButton.setOnAction(ev -> container.getChildren().remove(row));
 
             switch (titledPane.getText()) {
@@ -99,7 +106,7 @@ public class ContactForm extends VBox {
                     field = new TypeFormField<>("Red Social", SocialPlatform.values(), Arrays.stream(SocialPlatform.values()).map(SocialPlatform::getIcon).toArray(Ikon[]::new));
                     break;
                 default:
-                    field = new SimpleFormField("Campo", FontAwesomeSolid.USER);
+                    field = new AddressFormField();
                     break;
             }
 
@@ -158,6 +165,123 @@ public class ContactForm extends VBox {
         Platform.runLater(nameField::requestFocus);
     }
 
+    private void loadContactData() {
+        // Basic fields
+        nameField.setValue(contact.getName());
+        notesField.setValue(contact.getNotes());
+
+        if (contactType == ContactType.Persona && contact instanceof Person) {
+            Person person = (Person) contact;
+            middleNameField.setValue(person.getMiddleName());
+            lastNameField.setValue(person.getLastName());
+        }
+
+        // Phones
+        for (Phone phone : contact.getPhones()) {
+            final HBox row = new HBox(4);
+            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            removeButton.getStyleClass().add("text-icon-button");
+            removeButton.setTooltip(new Tooltip("Eliminar"));
+            VBox container = (VBox) phonesTitledPane.getContent();
+            removeButton.setOnAction(ev -> container.getChildren().remove(row));
+
+            TypeFormField<PhoneType> field = new TypeFormField<>("Teléfono", PhoneType.values(), FontAwesomeSolid.PHONE);
+            field.setType(phone.getType());
+            field.setValue(phone.getNumber());
+
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.getChildren().addAll(field, removeButton);
+            row.setPadding(new Insets(0, 8, 0, 8));
+            HBox.setHgrow(field, Priority.ALWAYS);
+            container.getChildren().add(row);
+        }
+        if (!contact.getPhones().isEmpty()) phonesTitledPane.setExpanded(true);
+
+        // Emails (similar logic to phones)
+        for (Email email : contact.getEmails()) {
+            final HBox row = new HBox(4);
+            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            removeButton.getStyleClass().add("text-icon-button");
+            removeButton.setTooltip(new Tooltip("Eliminar"));
+            VBox container = (VBox) emailsTitledPane.getContent();
+            removeButton.setOnAction(ev -> container.getChildren().remove(row));
+
+            TypeFormField<EmailType> field = new TypeFormField<>("Email", EmailType.values(), FontAwesomeSolid.ENVELOPE);
+            field.setType(email.getType());
+            field.setValue(email.getEmail());
+
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.getChildren().addAll(field, removeButton);
+            row.setPadding(new Insets(0, 8, 0, 8));
+            HBox.setHgrow(field, Priority.ALWAYS);
+            container.getChildren().add(row);
+        }
+        if (!contact.getEmails().isEmpty()) emailsTitledPane.setExpanded(true);
+
+        // Addresses (using your new AddressFormField)
+        for (Address address : contact.getAddresses()) {
+            final HBox row = new HBox(4);
+            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            removeButton.getStyleClass().add("text-icon-button");
+            removeButton.setTooltip(new Tooltip("Eliminar"));
+            VBox container = (VBox) addressesTitledPane.getContent();
+            removeButton.setOnAction(ev -> container.getChildren().remove(row));
+
+            AddressFormField field = new AddressFormField(); // Instantiate your AddressFormField
+            field.setValue(address); // Call the setter on AddressFormField
+
+            row.setAlignment(Pos.TOP_LEFT); // Ensure alignment is good for multiline AddressFormField
+            row.getChildren().addAll(field, removeButton);
+            row.setPadding(new Insets(0, 8, 0, 8));
+            HBox.setHgrow(field, Priority.ALWAYS);
+            container.getChildren().add(row);
+        }
+        if (!contact.getAddresses().isEmpty()) addressesTitledPane.setExpanded(true);
+
+
+        // Dates (similar logic)
+        for (ImportantDate date : contact.getDates()) {
+            final HBox row = new HBox(4);
+            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            removeButton.getStyleClass().add("text-icon-button");
+            removeButton.setTooltip(new Tooltip("Eliminar"));
+            VBox container = (VBox) datesTitledPane.getContent();
+            removeButton.setOnAction(ev -> container.getChildren().remove(row));
+
+            DateFormField field = new DateFormField();
+            field.setValue(date);
+
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.getChildren().addAll(field, removeButton);
+            row.setPadding(new Insets(0, 8, 0, 8));
+            HBox.setHgrow(field, Priority.ALWAYS);
+            container.getChildren().add(row);
+        }
+        if (!contact.getDates().isEmpty()) datesTitledPane.setExpanded(true);
+
+
+        // Social Media (similar logic)
+        for (SocialMedia socialMedia : contact.getSocialMedias()) {
+            final HBox row = new HBox(4);
+            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            removeButton.getStyleClass().add("text-icon-button");
+            removeButton.setTooltip(new Tooltip("Eliminar"));
+            VBox container = (VBox) socialMediaTitledPane.getContent();
+            removeButton.setOnAction(ev -> container.getChildren().remove(row));
+
+            TypeFormField<SocialPlatform> field = new TypeFormField<>("Red Social", SocialPlatform.values(), Arrays.stream(SocialPlatform.values()).map(SocialPlatform::getIcon).toArray(Ikon[]::new));
+            field.setType(socialMedia.getPlatform());
+            field.setValue(socialMedia.getUsername());
+
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.getChildren().addAll(field, removeButton);
+            row.setPadding(new Insets(0, 8, 0, 8));
+            HBox.setHgrow(field, Priority.ALWAYS);
+            container.getChildren().add(row);
+        }
+        if (!contact.getSocialMedias().isEmpty()) socialMediaTitledPane.setExpanded(true);
+    }
+
     public Contact getContact() {
         if (buildContact()) return contact;
         return null;
@@ -173,7 +297,7 @@ public class ContactForm extends VBox {
             return false;
         }
 
-        Contact.ContactBuilder contactBuilder;
+        Contact.ContactBuilder<?> contactBuilder;
         if (contactType == ContactType.Persona) {
             contactBuilder = Person.builder()
                     .name(nameField.getValue())
@@ -185,8 +309,15 @@ public class ContactForm extends VBox {
                     .name(nameField.getValue())
                     .contactType(ContactType.Empresa);
         }
-        contactBuilder.favorite(false)
-                .notes(notesField.getValue());
+
+        if (this.contact != null) {
+            contactBuilder.id(this.contact.getId());
+            contactBuilder.favorite(this.contact.isFavorite());
+        } else {
+            contactBuilder.favorite(false);
+        }
+
+        contactBuilder.notes(notesField.getValue());
         final ObservableList<Node> fields = ((VBox) phonesTitledPane.getContent()).getChildren();
         for (Node field : fields) {
             final TypeFormField<PhoneType> formField = (TypeFormField<PhoneType>) ((HBox) field).getChildren().get(0);
@@ -212,6 +343,13 @@ public class ContactForm extends VBox {
         for (Node field : datesFields) {
             final DateFormField formField = (DateFormField) ((HBox) field).getChildren().get(0);
             contactBuilder.addDate(formField.getValue());
+        }
+
+        final ObservableList<Node> addressFields = ((VBox) addressesTitledPane.getContent()).getChildren();
+        for (Node field : addressFields) {
+            final AddressFormField formField = (AddressFormField) ((HBox) field).getChildren().get(0);
+            final Address address = formField.getValue();
+            if (address != null) contactBuilder.addAddress(address);
         }
         contact = contactBuilder.build();
         LOGGER.info("Contacto creado");

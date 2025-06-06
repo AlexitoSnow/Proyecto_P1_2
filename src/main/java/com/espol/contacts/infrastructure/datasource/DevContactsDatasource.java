@@ -1,6 +1,6 @@
 package com.espol.contacts.infrastructure.datasource;
 
-import com.espol.contacts.domain.datasource.ContactsDatasource;
+import com.espol.contacts.domain.datasource.BaseDatasource;
 import com.espol.contacts.domain.entity.*;
 import com.espol.contacts.domain.entity.enums.*;
 
@@ -11,15 +11,18 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Logger;
 
-public class DevContactsDatasourceImpl implements ContactsDatasource {
+public class DevContactsDatasource implements BaseDatasource<Contact> {
     private final List<Contact> contacts = new ArrayList<>();
-    private final Logger LOGGER = Logger.getLogger(DevContactsDatasourceImpl.class.getName());
-    private static final DevContactsDatasourceImpl INSTANCE = new DevContactsDatasourceImpl();
+    private final Logger LOGGER = Logger.getLogger(DevContactsDatasource.class.getName());
+    private static DevContactsDatasource instance;
 
-    private DevContactsDatasourceImpl() {}
+    private DevContactsDatasource() {}
 
-    public static DevContactsDatasourceImpl getInstance() {
-        return INSTANCE;
+    public static DevContactsDatasource getInstance() {
+        if (instance == null) {
+            instance = new DevContactsDatasource();
+        }
+        return instance;
     }
 
     @Override
@@ -30,6 +33,7 @@ public class DevContactsDatasourceImpl implements ContactsDatasource {
                 final int type = new Random().nextInt(2);
                 contacts.add(type == 0 ? Person
                         .builder()
+                        .id((long) i)
                         .middleName("Alexito")
                         .lastName("Snow")
                         .name("Person RANDOM FULL TEXT LOREM IPSUM" + (i + 1))
@@ -44,9 +48,9 @@ public class DevContactsDatasourceImpl implements ContactsDatasource {
                         .addSocialMedia(new SocialMedia("alexitosnow", SocialPlatform.TIKTOK))
                         .addSocialMedia(new SocialMedia("Alexander Nieves", SocialPlatform.LINKEDIN))
                         .notes("Este man es una persona chévere")
-                        .id((long) i)
                         .build():
                         Company.builder()
+                                .id((long) i)
                                 .name("Company RANDOM FULL TEXT LOREM IPSUM" + (i + 1))
                         .addPhone(new Phone(PhoneType.MAIN, "0983434"))
                                 .contactType(ContactType.Empresa).build()
@@ -69,19 +73,19 @@ public class DevContactsDatasourceImpl implements ContactsDatasource {
 
     @Override
     public Contact save(Contact contact) {
-        LOGGER.info("Tamaño antes: " + contacts.size());
         if (contacts.contains(contact)) {
-            contacts.remove(contact);
+            contacts.set(contacts.indexOf(contact), contact);
+            LOGGER.info("Actualizando contacto ID: " + contact.getId());
+            return contact;
         }
         contact.setId(contacts.size() + 1L);
         contacts.add(contact);
         LOGGER.info("Guardando contacto ID: " + contact.getId());
-        LOGGER.info("Tamaño después: " + contacts.size());
         return contact;
     }
 
     @Override
     public void delete(Contact contact) {
-
+        contacts.remove(contact);
     }
 }

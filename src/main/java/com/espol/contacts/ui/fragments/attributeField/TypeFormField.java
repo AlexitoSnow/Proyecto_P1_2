@@ -11,6 +11,7 @@ public class TypeFormField<K> extends BaseFormField<String> {
     private final K[] options;
     private K type;
     private final Ikon[] ikons;
+    private ChoiceBox<K> choiceBox;
 
     public TypeFormField(String hintText, K[] options, Ikon leadingIcon) {
         super(hintText, leadingIcon);
@@ -26,8 +27,8 @@ public class TypeFormField<K> extends BaseFormField<String> {
         initializeField();
     }
 
-    private ChoiceBox<K> createChoiceBox() {
-        ChoiceBox<K> choiceBox = new ChoiceBox<>();
+    private void createChoiceBox() {
+        choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll(options);
         choiceBox.getSelectionModel().selectFirst();
         choiceBox.getStyleClass().add("text-icon-button");
@@ -38,7 +39,6 @@ public class TypeFormField<K> extends BaseFormField<String> {
                 changeIcon(ikons[choiceBox.getSelectionModel().getSelectedIndex()]);
             }
         });
-        return choiceBox;
     }
 
     private void createTextField() {
@@ -53,7 +53,8 @@ public class TypeFormField<K> extends BaseFormField<String> {
 
     @Override
     public void initializeField() {
-        HBox selectionBox = new HBox(leadingIcon, createChoiceBox());
+        createChoiceBox();
+        HBox selectionBox = new HBox(leadingIcon, choiceBox);
         createTextField();
 
         selectionBox.setAlignment(Pos.CENTER_LEFT);
@@ -62,7 +63,26 @@ public class TypeFormField<K> extends BaseFormField<String> {
         this.setAlignment(Pos.CENTER_LEFT);
     }
 
+    @Override
+    public void setValue(String value) {
+        ((TextField) mainField).setText(value);
+        this.value = value;
+    }
+
+    public void setType(K type) {
+        choiceBox.getSelectionModel().select(type);
+        this.type = type;
+    }
+
     public K getType() {
         return type;
+    }
+
+    @Override
+    public String validate() {
+        if (validator == null) return null;
+        TextField textField = (TextField) mainField;
+        String value = textField.getText();
+        return validator.apply(value);
     }
 }

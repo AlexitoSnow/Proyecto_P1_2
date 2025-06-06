@@ -13,6 +13,7 @@ public class Contact {
     protected final Set<Address> addresses;
     protected final Set<ImportantDate> dates;
     protected final Set<SocialMedia> socialMedias;
+    protected final Set<RelatedContact> relatedContacts;
     protected String name;
     protected String notes;
     protected ContactType contactType;
@@ -29,6 +30,7 @@ public class Contact {
         this.notes = builder.notes;
         this.contactType = builder.contactType;
         this.favorite = builder.favorite;
+        this.relatedContacts = builder.relatedContacts;
     }
 
     public static abstract class ContactBuilder<T extends ContactBuilder<T>> {
@@ -38,6 +40,7 @@ public class Contact {
         protected Set<Address> addresses = new HashSet<>();
         protected Set<ImportantDate> dates = new HashSet<>();
         protected Set<SocialMedia> socialMedias = new HashSet<>();
+        protected Set<RelatedContact> relatedContacts = new HashSet<>();
         protected String name;
         protected String notes;
         protected ContactType contactType;
@@ -75,6 +78,11 @@ public class Contact {
 
         public T addSocialMedia(SocialMedia socialMedia) {
             this.socialMedias.add(socialMedia);
+            return self();
+        }
+
+        public T addRelatedContact(RelatedContact relatedContact) {
+            this.relatedContacts.add(relatedContact);
             return self();
         }
 
@@ -139,6 +147,10 @@ public class Contact {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<RelatedContact> getRelatedContacts() {
+        return relatedContacts;
     }
 
     @Override

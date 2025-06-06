@@ -5,6 +5,7 @@ import com.espol.contacts.domain.entity.enums.DateType;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import static org.kordamp.ikonli.fontawesome6.FontAwesomeSolid.CALENDAR;
 public class DateFormField extends BaseFormField<ImportantDate> {
 
     private final DateType[] options;
+    private ChoiceBox<DateType> choiceBox;
 
     public DateFormField() {
         super("Fecha Importante", CALENDAR);
@@ -22,8 +24,8 @@ public class DateFormField extends BaseFormField<ImportantDate> {
         initializeField();
     }
 
-    private ChoiceBox<DateType> createChoiceBox() {
-        ChoiceBox<DateType> choiceBox = new ChoiceBox<>();
+    private void createChoiceBox() {
+        choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll(options);
         choiceBox.getSelectionModel().selectFirst();
         choiceBox.getStyleClass().add("text-icon-button");
@@ -31,7 +33,6 @@ public class DateFormField extends BaseFormField<ImportantDate> {
         choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             value.setType(newValue);
         });
-        return choiceBox;
     }
 
     private void createDatePicker() {
@@ -48,7 +49,7 @@ public class DateFormField extends BaseFormField<ImportantDate> {
 
     @Override
     public void initializeField() {
-        ChoiceBox<DateType> choiceBox = createChoiceBox();
+        createChoiceBox();
         HBox selectionBox = new HBox(leadingIcon, choiceBox);
 
         createDatePicker();
@@ -57,5 +58,20 @@ public class DateFormField extends BaseFormField<ImportantDate> {
 
         this.getChildren().addAll(selectionBox, mainField);
         this.setAlignment(Pos.CENTER_LEFT);
+    }
+
+    @Override
+    public void setValue(ImportantDate value) {
+        this.value = value;
+        this.choiceBox.getSelectionModel().select(value.getType());
+        ((DatePicker) this.mainField).setValue(value.getDate());
+    }
+
+    @Override
+    public String validate() {
+        if (validator == null) return null;
+        DatePicker datePicker = (DatePicker) mainField;
+        String value = datePicker.getValue().toString();
+        return validator.apply(value);
     }
 }

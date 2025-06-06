@@ -2,9 +2,10 @@ package com.espol.contacts.config.router;
 
 import com.espol.contacts.App;
 import com.espol.contacts.config.constants.Constants;
-import com.espol.contacts.ui.controller.DataInitializable;
+import com.espol.contacts.domain.entity.Contact;
+import com.espol.contacts.domain.entity.enums.ContactType;
+import com.espol.contacts.ui.screens.RegisterContactScreen;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -51,21 +52,32 @@ public class AppRouter {
     }
 
     /**
-     * Navigate to another screen with the given route
+     * Navigate to another screen with the given route and a param
      * @param route to navigate
+     * @param data to send it to the route
      */
     public static <T> void setRoot(String route, T data) {
         try {
             FXMLLoader loader = loadFXML(route);
-            Parent parent = loader.load();
-            Object controller = loader.getController();
-            if (controller instanceof DataInitializable) {
-                ((DataInitializable<T>) controller).initData(data);
-            }
 
-            scene.setRoot(parent);
+            loader.setControllerFactory(type -> {
+                try {
+                    Object controllerInstance = type.getDeclaredConstructor().newInstance();
+                    if (route.equals(Routes.REGISTER_CONTACT)) {
+                        if (data instanceof ContactType) ((RegisterContactScreen) controllerInstance).setContactType((ContactType) data);
+                        if (data instanceof Contact) ((RegisterContactScreen) controllerInstance).setContact((Contact) data);
+                    }
+                    return controllerInstance;
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Error al crear la instancia del controlador para " + type.getName(), e);
+                    throw new RuntimeException("No se pudo crear la instancia del controlador.", e);
+                }
+            });
+
+            scene.setRoot(loader.load());
+
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to load FXML", e.getMessage());
+            log.log(Level.SEVERE, "Error al cargar FXML o establecer la raíz para " + route, e);
         }
     }
     

@@ -5,11 +5,14 @@ import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.function.Function;
+
 public abstract class BaseFormField<E> extends VBox {
     protected final String hintText;
     protected FontIcon leadingIcon;
     protected Node mainField;
     protected E value;
+    protected Function<String, String> validator;
 
     protected static final double SPACING = 4.0;
     protected static final double CONTAINER_SPACING = 4.0;
@@ -35,9 +38,16 @@ public abstract class BaseFormField<E> extends VBox {
         return value;
     }
 
+    public abstract void setValue(E value);
+
     @Override
     public void requestFocus() {
         mainField.requestFocus();
-        System.out.println("Requesting focus on " + mainField.getClass().getSimpleName());
     }
+
+    public void setValidator(Function<String, String> validator) {
+        this.validator = validator;
+    }
+
+    public abstract String validate();
 }

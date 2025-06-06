@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 // TODO: Actualizar el tipo de parámetro phone según se defina en Contact
-public interface ContactsDatasource {
-    List<Contact> getAll();
-    Optional<Contact> getById(Long id);
-    Optional<Contact> getByPhone(String phone);
-    Contact save(Contact contact);
-    void delete(Contact contact);
+public interface BaseDatasource<T> {
+    List<T> getAll();
+    Optional<T> getById(Long id);
+    Optional<T> getByPhone(String phone);
+    Contact save(T entity);
+    void delete(T entity);
 }
