@@ -1,7 +1,7 @@
 package com.espol.contacts.config.utils;
 
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.Comparator;
 
 public interface List<E> extends Iterable<E>, Serializable {
 
@@ -35,5 +35,19 @@ public interface List<E> extends Iterable<E>, Serializable {
 
     @Override
     public String toString();
+
+    default void sort(Comparator<E> comparator) {
+        int n = this.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                E a = this.get(j);
+                E b = this.get(j + 1);
+                if (comparator.compare(a, b) > 0) {
+                    this.set(j, b);
+                    this.set(j + 1, a);
+                }
+            }
+        }
+    }
 
 }

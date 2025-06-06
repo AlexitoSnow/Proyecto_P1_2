@@ -3,7 +3,8 @@ package com.espol.contacts.config.utils;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class CircularDoublyLinkedList<E> implements List<E> {
+// TODO: Implement real Arraylist
+public class ArrayList<E> implements List<E> {
 
     private Node<E> head;
     private int size = 0;
@@ -150,7 +151,11 @@ public class CircularDoublyLinkedList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        return getNode(index).getElement();
+        try {
+            return getNode(index).getElement();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
