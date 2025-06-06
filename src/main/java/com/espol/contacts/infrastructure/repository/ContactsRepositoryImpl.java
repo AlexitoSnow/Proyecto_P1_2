@@ -1,25 +1,22 @@
 package com.espol.contacts.infrastructure.repository;
 
+import com.espol.contacts.config.utils.ArrayList;
+import com.espol.contacts.config.utils.List;
 import com.espol.contacts.config.utils.observer.Observer;
 import com.espol.contacts.domain.datasource.BaseDatasource;
 import com.espol.contacts.domain.entity.Contact;
-import com.espol.contacts.domain.entity.enums.ContactType;
+import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.domain.repository.ContactsRepository;
-import com.espol.contacts.infrastructure.datasource.DevContactsDatasource;
+import com.espol.contacts.infrastructure.datasource.ContactsDatasource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-public class ContactsRepositoryImpl implements ContactsRepository {
+public class ContactsRepositoryImpl implements ContactsRepository, Observer<User> {
     private final BaseDatasource<Contact> datasource;
     private final List<Observer<Contact>> observers;
 
     private static ContactsRepositoryImpl instance;
 
     private ContactsRepositoryImpl() {
-        this.datasource = DevContactsDatasource.getInstance();
+        this.datasource = ContactsDatasource.getInstance();
         this.observers = new ArrayList<>();
     }
 
@@ -33,21 +30,6 @@ public class ContactsRepositoryImpl implements ContactsRepository {
     @Override
     public List<Contact> getAll() {
         return datasource.getAll();
-    }
-
-    @Override
-    public List<Contact> getByType(ContactType type) {
-        return getAll().stream().filter(contact -> contact.getContactType().equals(type)).collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<Contact> getById(Long id) {
-        return datasource.getById(id);
-    }
-
-    @Override
-    public Optional<Contact> getByPhone(String phone) {
-        return datasource.getByPhone(phone);
     }
 
     @Override
@@ -65,7 +47,7 @@ public class ContactsRepositoryImpl implements ContactsRepository {
 
     @Override
     public void addObserver(Observer<Contact> observer) {
-        observers.add(observer);
+        observers.addLast(observer);
     }
 
     @Override
@@ -76,5 +58,10 @@ public class ContactsRepositoryImpl implements ContactsRepository {
     @Override
     public void notifyObservers(Contact data) {
         observers.forEach(observer -> observer.update(data));
+    }
+
+    @Override
+    public void update(User data) {
+        instance = null; // Reset instance when user changes
     }
 }
