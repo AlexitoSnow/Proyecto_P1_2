@@ -2,9 +2,10 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.PhoneType;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Phone {
+public class Phone implements Serializable {
     private final PhoneType type;
     private final String number;
 

@@ -2,11 +2,10 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.ContactType;
 
+import java.io.Serializable;
 import java.util.*;
 
-// TODO: Convertir en serializable
-// TODO: Convertir subclases y clases que usa en serializable
-public class Contact {
+public class Contact implements Serializable {
     protected Long id;
     protected final Set<Email> emails;
     protected final Set<Phone> phones;

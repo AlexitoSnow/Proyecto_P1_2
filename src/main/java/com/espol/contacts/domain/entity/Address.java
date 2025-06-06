@@ -1,10 +1,13 @@
 package com.espol.contacts.domain.entity;
 
+import com.espol.contacts.config.utils.ArrayList;
+import com.espol.contacts.config.utils.List;
 import com.espol.contacts.domain.entity.enums.AddressType;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Address {
+public class Address implements Serializable {
     private String street;
     private String city;
     private String state;
@@ -98,19 +101,19 @@ public class Address {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        java.util.List<String> addressParts = new java.util.ArrayList<>();
+        List<String> addressParts = new ArrayList<>();
         if (city != null && !city.isEmpty()) {
-            addressParts.add(city);
+            addressParts.addLast(city);
         }
         if (state != null && !state.isEmpty()) {
-            addressParts.add(state);
+            addressParts.addLast(state);
         }
         if (country != null && !country.isEmpty()) {
-            addressParts.add(country);
+            addressParts.addLast(country);
         }
 
         if (street != null && !street.isEmpty()) {
-            addressParts.add(street);
+            addressParts.addLast(street);
         }
 
         if (!addressParts.isEmpty()) {

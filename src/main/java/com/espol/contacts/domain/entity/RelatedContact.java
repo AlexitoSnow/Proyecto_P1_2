@@ -2,7 +2,9 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.Relationship;
 
-public class RelatedContact {
+import java.io.Serializable;
+
+public class RelatedContact implements Serializable {
     private Relationship relationship;
     private String phoneNumber;
 

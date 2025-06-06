@@ -2,9 +2,10 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.EmailType;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Email {
+public class Email implements Serializable {
     private final EmailType type;
     private final String email;
 

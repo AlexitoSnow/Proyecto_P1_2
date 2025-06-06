@@ -2,9 +2,10 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.SocialPlatform;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class SocialMedia {
+public class SocialMedia implements Serializable {
     private final String username;
     private final SocialPlatform platform;
 
