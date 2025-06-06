@@ -1,34 +1,49 @@
 package com.espol.contacts.domain.entity;
 
-import java.io.Serializable;
+public class Person extends Contact {
+    private final String middleName;
+    private final String lastName;
 
-public class Person extends Contact implements Serializable {
-    private String middleName;
-    private String lastName;
-
-    private Person() {
-        super();
+    private Person(PersonBuilder builder) {
+        super(builder);
+        this.middleName = builder.middleName;
+        this.lastName = builder.lastName;
     }
 
-    public static Person build() {
-        return new Person();
+    public static class PersonBuilder extends ContactBuilder<PersonBuilder> {
+        private String middleName;
+        private String lastName;
+
+        public PersonBuilder middleName(String middleName) {
+            this.middleName = middleName;
+            return this;
+        }
+
+        public PersonBuilder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        @Override
+        protected PersonBuilder self() {
+            return this;
+        }
+
+        @Override
+        public Person build() {
+            return new Person(this);
+        }
     }
 
-    public Person middleName(String middleName) {
-        this.middleName = middleName;
-        return this;
-    }
-
-    public Person lastName(String lastName) {
-        this.lastName = lastName;
-        return this;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public static PersonBuilder builder() {
+        return new PersonBuilder();
     }
 
     public String getMiddleName() {
         return middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 }

@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 public class EmptyLabel extends Label {
 
     public EmptyLabel() {
-        this.setText("No has creado ningún contacto");
+        this.setText("No has seleccionado ningún contacto");
         this.setAlignment(Pos.CENTER);
     }
 }

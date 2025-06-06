@@ -2,8 +2,10 @@ package com.espol.contacts.config.router;
 
 import com.espol.contacts.App;
 import com.espol.contacts.config.constants.Constants;
+import com.espol.contacts.domain.entity.Contact;
+import com.espol.contacts.domain.entity.enums.ContactType;
+import com.espol.contacts.ui.screens.RegisterContactScreen;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -27,7 +29,7 @@ public class AppRouter {
      */
     public static void initStage(Stage stage) {
         try {
-            scene = new Scene(loadFXML(Routes.HOME), WIDTH, HEIGHT);
+            scene = new Scene(loadFXML(Routes.LOGIN).load(), WIDTH, HEIGHT);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed to load main view fxml\nMessage: {0}", e.getMessage());
         }
@@ -43,15 +45,46 @@ public class AppRouter {
      */
     public static void setRoot(String route) {
         try {
-            scene.setRoot(loadFXML(route));
+            scene.setRoot(loadFXML(route).load());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed to load FXML", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Navigate to another screen with the given route and a param
+     * @param route to navigate
+     * @param data to send it to the route
+     */
+    public static <T> void setRoot(String route, T data) {
+        try {
+            FXMLLoader loader = loadFXML(route);
+
+            loader.setControllerFactory(type -> {
+                try {
+                    Object controllerInstance = type.getDeclaredConstructor().newInstance();
+                    if (route.equals(Routes.REGISTER_CONTACT)) {
+                        if (data instanceof ContactType) ((RegisterContactScreen) controllerInstance).setContactType((ContactType) data);
+                        if (data instanceof Contact) ((RegisterContactScreen) controllerInstance).setContact((Contact) data);
+                    }
+                    return controllerInstance;
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Error al crear la instancia del controlador para " + type.getName(), e);
+                    throw new RuntimeException("No se pudo crear la instancia del controlador.", e);
+                }
+            });
+
+            scene.setRoot(loader.load());
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error al cargar FXML o establecer la raíz para " + route, e);
         }
     }
     
-    private static Parent loadFXML(String fxml) throws IOException {
+    private static FXMLLoader loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ui/screens/" + fxml + ".fxml"));
         log.log(Level.INFO, "Navigate to {0}", fxml);
-        return fxmlLoader.load();
+        return fxmlLoader;
     }
 }

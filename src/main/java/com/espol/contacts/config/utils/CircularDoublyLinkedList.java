@@ -1,10 +1,9 @@
 package com.espol.contacts.config.utils;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class CircularDoublyLinkedList<E> implements List<E>, Serializable {
+public class CircularDoublyLinkedList<E> implements List<E> {
 
     private Node<E> head;
     private int size = 0;

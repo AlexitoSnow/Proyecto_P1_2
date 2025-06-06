@@ -1,20 +1,30 @@
 package com.espol.contacts.infrastructure.repository;
 
-import com.espol.contacts.domain.datasource.ContactsDatasource;
+import com.espol.contacts.config.utils.ArrayList;
+import com.espol.contacts.config.utils.List;
+import com.espol.contacts.config.utils.observer.Observer;
+import com.espol.contacts.domain.datasource.BaseDatasource;
 import com.espol.contacts.domain.entity.Contact;
-import com.espol.contacts.domain.entity.enums.ContactType;
+import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.domain.repository.ContactsRepository;
-import com.espol.contacts.infrastructure.datasource.DevContactsDatasourceImpl;
+import com.espol.contacts.infrastructure.datasource.ContactsDatasource;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+public class ContactsRepositoryImpl implements ContactsRepository, Observer<User> {
+    private final BaseDatasource<Contact> datasource;
+    private final List<Observer<Contact>> observers;
 
-public class ContactsRepositoryImpl implements ContactsRepository {
-    private final ContactsDatasource datasource;
+    private static ContactsRepositoryImpl instance;
 
-    public ContactsRepositoryImpl() {
-        this.datasource = new DevContactsDatasourceImpl();
+    private ContactsRepositoryImpl() {
+        this.datasource = ContactsDatasource.getInstance();
+        this.observers = new ArrayList<>();
+    }
+
+    public static ContactsRepositoryImpl getInstance() {
+        if (instance == null) {
+            instance = new ContactsRepositoryImpl();
+        }
+        return instance;
     }
 
     @Override
@@ -23,32 +33,35 @@ public class ContactsRepositoryImpl implements ContactsRepository {
     }
 
     @Override
-    public List<Contact> getFavorites() {
-        return getAll().stream().filter(Contact::isFavorite).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Contact> getByType(ContactType type) {
-        return getAll().stream().filter(contact -> contact.getContactType().equals(type)).collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<Contact> getById(Long id) {
-        return datasource.getById(id);
-    }
-
-    @Override
-    public Optional<Contact> getByPhone(String phone) {
-        return datasource.getByPhone(phone);
-    }
-
-    @Override
     public Contact save(Contact contact) {
-        return datasource.save(contact);
+        final Contact saved = datasource.save(contact);
+        notifyObservers(contact);
+        return saved;
     }
 
     @Override
     public void delete(Contact contact) {
         datasource.delete(contact);
+        notifyObservers(null);
+    }
+
+    @Override
+    public void addObserver(Observer<Contact> observer) {
+        observers.addLast(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer<Contact> observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(Contact data) {
+        observers.forEach(observer -> observer.update(data));
+    }
+
+    @Override
+    public void update(User data) {
+        instance = null; // Reset instance when user changes
     }
 }

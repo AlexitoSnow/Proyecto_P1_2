@@ -1,5 +1,6 @@
 package com.espol.contacts;
 
+import com.espol.contacts.config.LoggerConfig;
 import com.espol.contacts.config.router.AppRouter;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -13,6 +14,8 @@ public class App extends Application {
 
     public static void main(String[] args) {
         setUserAgentStylesheet("fluent-light.css");
+        LoggerConfig.configure();
+
         launch();
     }
 

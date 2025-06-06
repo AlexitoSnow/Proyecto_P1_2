@@ -1,5 +1,7 @@
 package com.espol.contacts.domain.entity;
 
+import com.espol.contacts.config.utils.ArrayList;
+import com.espol.contacts.config.utils.List;
 import com.espol.contacts.domain.entity.enums.AddressType;
 
 import java.io.Serializable;
@@ -99,22 +101,19 @@ public class Address implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        java.util.List<String> addressParts = new java.util.ArrayList<>();
-        if (city != null) {
-            addressParts.add(city);
+        List<String> addressParts = new ArrayList<>();
+        if (city != null && !city.isEmpty()) {
+            addressParts.addLast(city);
         }
-        if (state != null) {
-            addressParts.add(state);
+        if (state != null && !state.isEmpty()) {
+            addressParts.addLast(state);
         }
-        if (country != null) {
-            addressParts.add(country);
+        if (country != null && !country.isEmpty()) {
+            addressParts.addLast(country);
         }
 
-        if (street != null) {
-            sb.append(street);
-            if (!addressParts.isEmpty()) {
-                sb.append(". ");
-            }
+        if (street != null && !street.isEmpty()) {
+            addressParts.addLast(street);
         }
 
         if (!addressParts.isEmpty()) {
@@ -123,14 +122,12 @@ public class Address implements Serializable {
 
         if (sb.length() > 0 && postalCode != null) {
             sb.append(". ");
-        } else if (sb.length() > 0 && postalCode == null) {
-            sb.append(".");
         }
 
         if (postalCode != null) {
             sb.append(postalCode);
         }
 
-        return sb.toString().trim();
+        return sb.toString();
     }
 }

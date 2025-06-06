@@ -1,15 +1,23 @@
 package com.espol.contacts.domain.entity;
 
-import java.io.Serializable;
-
-public class Company extends Contact implements Serializable {
-
-    private Company() {
-        super();
+public class Company extends Contact {
+    private Company(CompanyBuilder builder) {
+        super(builder);
     }
 
-    public static Company build() {
-        return new Company();
+    public static class CompanyBuilder extends ContactBuilder<CompanyBuilder> {
+        @Override
+        protected CompanyBuilder self() {
+            return this;
+        }
+
+        @Override
+        public Company build() {
+            return new Company(this);
+        }
     }
 
+    public static CompanyBuilder builder() {
+        return new CompanyBuilder();
+    }
 }

@@ -2,7 +2,7 @@ package com.espol.contacts.config.utils;
 
 import java.io.Serializable;
 
-public class Node<E> implements Serializable{
+public class Node<E> implements Serializable {
 
     private E element;
     private Node next;
