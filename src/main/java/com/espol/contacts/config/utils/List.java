@@ -1,0 +1,39 @@
+package com.espol.contacts.config.utils;
+
+import java.io.Serializable;
+import java.util.Iterator;
+
+public interface List<E> extends Iterable<E>, Serializable {
+
+    public int size();
+
+    public boolean isEmpty();
+
+    public void clear();
+
+    public boolean addFirst(E element); // inserta E al inicio
+
+    public boolean addLast(E element); // inserta E al final
+
+    public E removeFirst(); // remueve E al inicio
+
+    public E removeLast(); // remueve E al final
+
+    public boolean add(int index, E element); // inserta E en posición index
+
+    public E remove(int index); // remueve y retorna E en posición index
+
+    public E remove(E elemento); // remueve E
+
+    public E get(int index); // retorna E ubicado en la posición index
+
+    public E set(int index, E element); // setea E en la posición index
+
+    public E getPrevious(E actual);
+
+    public E getNext(E actual);
+
+    @Override
+    public String toString();
+
+}
