@@ -2,9 +2,10 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.AddressType;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Address {
+public class Address implements Serializable {
     private String street;
     private String city;
     private String state;

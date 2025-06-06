@@ -1,6 +1,8 @@
 package com.espol.contacts.domain.entity;
 
-public class Company extends Contact{
+import java.io.Serializable;
+
+public class Company extends Contact implements Serializable {
 
     private Company() {
         super();

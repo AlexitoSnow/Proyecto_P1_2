@@ -5,6 +5,8 @@ import com.espol.contacts.domain.datasource.ContactsDatasource;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Phone;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +42,7 @@ public class ContactsDatasourceImpl implements ContactsDatasource {
     // hasta la búsqueda, por eso se considera un solo method para ambos casos
     @Override
     public Contact save(Contact contact) {
+        serialize(null, null);
         return null;
     }
 
@@ -48,23 +51,58 @@ public class ContactsDatasourceImpl implements ContactsDatasource {
     // TODO: De ser necesario, validar con try-catch en caso de que el parámetro recibido sea null
     @Override
     public void delete(Contact contact) {
+
     }
 
     // TODO: Verificar la existencia de la carpeta
     // TODO: Crear la carpeta del directorio de contactos en caso de no existir
     // TODO: Retornar la referencia a la carpeta
     // TODO: Corregir el tipo de dato de retorno
-    private String getFolder() {
+    private File getFolder() {
         // Recordar que en esa ruta se almacenan los directorios de contacto
         final String directories = Constants.DIRECTORY_FOLDER;
-        return directories;
+
+        final File directory = new File(directories);
+
+        if (!directory.exists()) {
+
+            directory.mkdirs();
+        }
+        return directory;
     }
 
     // TODO: Implementar la deserialización del archivo, pueden usar un nombre Hardcodeado como "dummy-contacts.contacts"
     // TODO: Llamar a getFolder para obtener la referencia del directorio
     // TODO: Corregir variable file que obtiene el archivo
     private List<Contact> deserializeFile() {
-        final String file = getFolder() + "dummy-contacts.contacts";
-        return null;
+        List<Contact> contactos = null;
+        final File file = new File(Constants.DIRECTORY_FOLDER + "dummy-contacts.contacts");
+        if (!file.exists()) {
+            file.mkdirs();
+            return new ArrayList<>();
+        }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            contactos = (List<Contact>)ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+
+            e.printStackTrace();
+        }
+        return contactos;
+
     }
+
+    private void serialize(List<Contact> contacts, String filePath){
+        final File file = new File(Constants.DIRECTORY_FOLDER + filePath );
+
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath));){
+            oos.writeObject(contacts);
+        }catch(IOException e) {
+
+            e.printStackTrace();
+
+        }
+    }
+
+
+
 }

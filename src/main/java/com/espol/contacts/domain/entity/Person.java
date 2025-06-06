@@ -1,6 +1,8 @@
 package com.espol.contacts.domain.entity;
 
-public class Person extends Contact {
+import java.io.Serializable;
+
+public class Person extends Contact implements Serializable {
     private String middleName;
     private String lastName;
 

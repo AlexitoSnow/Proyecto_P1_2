@@ -2,11 +2,12 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.DateType;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Objects;
 
-public class ImportantDate {
+public class ImportantDate implements Serializable {
     private final LocalDate date;
     private final DateType type;
 
