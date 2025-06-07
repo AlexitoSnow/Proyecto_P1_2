@@ -1,8 +1,12 @@
-package com.espol.contacts.config.utils;
+package com.espol.contacts.config.utils.list;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
+// TODO: Add contains method to check if an element exists in the list
+// TODO: Add indexOf method to find the index of an element
+// TODO: Remove public modifier, as it is redundant in an interface
+// TODO: Remove comments that are not necessary for understanding the code
 public interface List<E> extends Iterable<E>, Serializable {
 
     public int size();
@@ -32,9 +36,6 @@ public interface List<E> extends Iterable<E>, Serializable {
     public E getPrevious(E actual);
 
     public E getNext(E actual);
-
-    @Override
-    public String toString();
 
     default void sort(Comparator<E> comparator) {
         int n = this.size();

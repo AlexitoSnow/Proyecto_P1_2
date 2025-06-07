@@ -1,4 +1,4 @@
-package com.espol.contacts.config.utils;
+package com.espol.contacts.config.utils.list;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
