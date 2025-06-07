@@ -10,13 +10,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import javafx.scene.Cursor?>
 <fx:root alignment="CENTER" maxWidth="1.7976931348623157E308" prefWidth="400.0" minHeight="-Infinity"
          minWidth="-Infinity" spacing="8.0" styleClass="contact-cell" type="HBox"
          xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
-    <cursor>
-        <Cursor fx:constant="HAND"/>
-    </cursor>
     <padding>
         <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
     </padding>
@@ -32,9 +28,6 @@
     </Label>
     <MenuButton fx:id="trailing" maxHeight="1.7976931348623157E308" mnemonicParsing="false"
                 styleClass="text-icon-button">
-        <cursor>
-            <Cursor fx:constant="HAND"/>
-        </cursor>
       <items>
           <MenuItem fx:id="favoriteMenuItem" mnemonicParsing="false" onAction="#toggleFavorite" text="Favoritos"/>
           <MenuItem mnemonicParsing="false" onAction="#onEdit" text="Editar">

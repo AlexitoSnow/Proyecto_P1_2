@@ -1,7 +1,9 @@
-package com.espol.contacts.ui.screens;
+package com.espol.contacts.ui.screens.login;
 
+import com.espol.contacts.config.SessionManager;
 import com.espol.contacts.config.router.*;
 
+import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.domain.repository.UsersRepository;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.attributeField.SimpleFormField;
@@ -14,6 +16,7 @@ import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
@@ -66,7 +69,9 @@ public class LoginScreen implements Initializable {
             }
         String username = userField.getValue();
         String password = passwordField.getValue();
-        if (repository.login(username, password)) {
+        Optional<User> user = repository.authenticate(username, password);
+        if (user.isPresent()) {
+            SessionManager.getInstance().setCurrentUser(user.get());
             AppRouter.setRoot(Routes.HOME);
         } else {
             Notifications.create()

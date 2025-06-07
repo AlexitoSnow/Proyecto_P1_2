@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Text?>
 
 
-<BorderPane xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.screens.RegisterScreen">
+<BorderPane xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.screens.register.RegisterScreen">
    <center>
       <VBox fx:id="container" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="350.0" prefWidth="400.0" spacing="16.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
          <padding>

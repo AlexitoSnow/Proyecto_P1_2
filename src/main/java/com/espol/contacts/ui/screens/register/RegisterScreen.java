@@ -1,5 +1,6 @@
-package com.espol.contacts.ui.screens;
+package com.espol.contacts.ui.screens.register;
 
+import com.espol.contacts.config.SessionManager;
 import com.espol.contacts.config.router.*;
 
 import com.espol.contacts.domain.entity.User;
@@ -83,12 +84,14 @@ public class RegisterScreen implements Initializable {
         String usernameValue = username.getValue();
         String emailValue = email.getValue();
         String passwordValue = password.getValue();
-        if (repository.register(new User(usernameValue, emailValue, passwordValue))) {
+        User user = new User(usernameValue, emailValue, passwordValue);
+        if (repository.register(user)) {
             Notifications.create()
                     .title("Registro exitoso")
                     .text("Usuario registrado correctamente")
                     .graphic(new FontIcon(USER))
                     .show();
+            SessionManager.getInstance().setCurrentUser(user);
             AppRouter.setRoot(Routes.HOME);
         } else {
             Notifications.create()

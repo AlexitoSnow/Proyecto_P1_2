@@ -1,15 +1,14 @@
-package com.espol.contacts.ui.screens;
+package com.espol.contacts.ui.screens.form;
 
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.enums.ContactType;
-import com.espol.contacts.ui.fragments.contactForm.ContactForm;
+import com.espol.contacts.ui.screens.form.fragments.ContactForm;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import com.espol.contacts.config.router.*;
-import com.espol.contacts.ui.fragments.home.ExtraInfoView;
+import com.espol.contacts.ui.fragments.ExtraInfoView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -19,11 +18,10 @@ import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class RegisterContactScreen implements Initializable {
+public class FormScreen implements Initializable {
     @FXML
     private VBox root;
     @FXML
@@ -43,7 +41,7 @@ public class RegisterContactScreen implements Initializable {
 
     private final ContactsRepository repository;
 
-    public RegisterContactScreen() {
+    public FormScreen() {
         repository = ContactsRepositoryImpl.getInstance();
     }
 
@@ -66,6 +64,9 @@ public class RegisterContactScreen implements Initializable {
     void saveContact(ActionEvent event) {
         this.contact = formControl.getContact();
         if (contact != null) {
+            contact.setProfilePicture(extraInfoView.getProfilePicture());
+            contact.setRelatedContacts(extraInfoView.getRelatedContacts());
+            contact.setGallery(extraInfoView.getGalleryImages());
             boolean isCreated = contact.getId() == null;
             repository.save(contact);
             Notifications.create()

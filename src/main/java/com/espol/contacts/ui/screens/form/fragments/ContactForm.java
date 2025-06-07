@@ -1,16 +1,13 @@
-package com.espol.contacts.ui.fragments.contactForm;
+package com.espol.contacts.ui.screens.form.fragments;
 
 import com.espol.contacts.domain.entity.*;
 import com.espol.contacts.domain.entity.enums.*;
-import com.espol.contacts.domain.repository.ContactsRepository;
-import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import com.espol.contacts.ui.fragments.attributeField.*;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -19,8 +16,6 @@ import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.material2.Material2AL;
-import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -81,14 +76,12 @@ public class ContactForm extends VBox {
         final VBox container = (VBox) titledPane.getContent();
         final Button button = new Button(null, new FontIcon(PLUS));
         button.getStyleClass().add("text-icon-button");
-        button.setCursor(Cursor.HAND);
         button.setTooltip(new Tooltip("Agregar " + titledPane.getText()));
         button.setOnAction(e -> {
             final HBox row = new HBox(4);
             final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.MINUS));
             removeButton.getStyleClass().add("text-icon-button");
             BaseFormField field;
-            removeButton.setCursor(Cursor.HAND);
             removeButton.setTooltip(new Tooltip("Remover"));
             removeButton.setOnAction(ev -> container.getChildren().remove(row));
 

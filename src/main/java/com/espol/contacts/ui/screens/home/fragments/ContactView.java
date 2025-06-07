@@ -1,4 +1,4 @@
-package com.espol.contacts.ui.fragments;
+package com.espol.contacts.ui.screens.home.fragments;
 
 import com.espol.contacts.domain.entity.Company;
 import com.espol.contacts.domain.entity.Contact;
@@ -6,7 +6,6 @@ import com.espol.contacts.domain.entity.Person;
 import com.espol.contacts.ui.fragments.attributeField.AttributeViewField;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 import org.kordamp.ikonli.material2.Material2MZ;

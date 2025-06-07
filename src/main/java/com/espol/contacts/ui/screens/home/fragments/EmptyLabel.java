@@ -1,4 +1,4 @@
-package com.espol.contacts.ui.fragments;
+package com.espol.contacts.ui.screens.home.fragments;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

@@ -1,4 +1,4 @@
-package com.espol.contacts.ui.fragments.home;
+package com.espol.contacts.ui.screens.home.fragments;
 
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Person;

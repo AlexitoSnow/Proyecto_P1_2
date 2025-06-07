@@ -1,4 +1,4 @@
-package com.espol.contacts.ui.fragments.home;
+package com.espol.contacts.ui.screens.home.fragments;
 
 import com.espol.contacts.config.router.AppRouter;
 import com.espol.contacts.config.router.Routes;
@@ -6,21 +6,15 @@ import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Person;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
-import com.espol.contacts.ui.fragments.IconButton;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -29,8 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-
-import static org.kordamp.ikonli.material2.Material2MZ.MORE_VERT;
 
 public class ContactCell extends HBox implements Initializable {
     @FXML
@@ -66,6 +58,7 @@ public class ContactCell extends HBox implements Initializable {
         }
     }
 
+    // TODO: Fix the displayName logic, the lastName should not be appended if it is null
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.setPadding(new Insets(8));
@@ -79,9 +72,8 @@ public class ContactCell extends HBox implements Initializable {
         nameLabel.setText(displayName);
         nameTooltip.setText(displayName);
 
-        //if (contact.getImage() != null) {
-        if (false) {
-            profileImage.setImage(new Image("/images/contact_icon.png"));
+        if (contact.getProfilePicture() != null) {
+            // TODO: Add the profile picture to profileImage ImageView
             this.getChildren().set(0, profileImage);
         }
 
@@ -98,7 +90,7 @@ public class ContactCell extends HBox implements Initializable {
     @FXML
     void onEdit(ActionEvent event) {
         LOGGER.info("onEditContact selected: " + this.contact.getId());
-        AppRouter.setRoot(Routes.EDIT_CONTACT, this.contact);
+        AppRouter.setRoot(Routes.FORM, this.contact);
     }
 
     @FXML

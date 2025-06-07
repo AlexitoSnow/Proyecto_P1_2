@@ -1,19 +1,20 @@
-package com.espol.contacts.ui.screens;
+package com.espol.contacts.ui.screens.home;
 
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.router.*;
-import com.espol.contacts.config.utils.ArrayList;
-import com.espol.contacts.config.utils.List;
+import com.espol.contacts.config.utils.list.ArrayList;
+import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
 import com.espol.contacts.domain.entity.*;
 import com.espol.contacts.domain.entity.enums.ContactType;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
-import com.espol.contacts.ui.fragments.*;
-import com.espol.contacts.ui.fragments.home.ContactCell;
-import com.espol.contacts.ui.fragments.home.ExtraInfoView;
-import com.espol.contacts.ui.fragments.home.SearchField;
+import com.espol.contacts.ui.screens.home.fragments.ContactCell;
+import com.espol.contacts.ui.screens.home.fragments.ContactView;
+import com.espol.contacts.ui.fragments.ExtraInfoView;
+import com.espol.contacts.ui.screens.home.fragments.EmptyLabel;
+import com.espol.contacts.ui.screens.home.fragments.SearchField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -81,7 +82,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
 
         createButton.getItems().forEach(item -> item.setOnAction(e -> {
             repository.removeObserver(this);
-            AppRouter.setRoot(Routes.REGISTER_CONTACT, ContactType.valueOf(item.getText()));
+            AppRouter.setRoot(Routes.FORM, ContactType.valueOf(item.getText()));
         }));
 
         showButton.getItems().addAll("Todos", "Favoritos", "Personas", "Empresas");

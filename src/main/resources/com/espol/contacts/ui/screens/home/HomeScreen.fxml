@@ -16,10 +16,9 @@
 <?import javafx.scene.text.Text?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import com.espol.contacts.ui.fragments.home.SearchField?>
+<?import com.espol.contacts.ui.screens.home.fragments.SearchField?>
 
-<?import javafx.scene.Cursor?>
-<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.screens.HomeScreen">
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.screens.home.HomeScreen">
    <top>
       <HBox alignment="CENTER" spacing="4.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -40,9 +39,6 @@
             <tooltip>
                <Tooltip text="Crear Contacto" />
             </tooltip>
-            <cursor>
-                <Cursor fx:constant="HAND" />
-            </cursor>
             <items>
                <MenuItem mnemonicParsing="false" text="Persona">
                   <graphic>
@@ -60,9 +56,6 @@
             </graphic>
          </MenuButton>
          <Button mnemonicParsing="false" onAction="#logOut" styleClass="text-icon-button">
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor>
             <graphic>
                <FontIcon iconLiteral="mdal-log_out" iconSize="20" />
             </graphic>
@@ -92,9 +85,6 @@
             <tooltip>
                <Tooltip text="Ordenar por" />
             </tooltip>
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor>
          </MenuButton>
          <ScrollPane hbarPolicy="NEVER" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
             <VBox fx:id="contactsListView" maxHeight="1.7976931348623157E308"/>
