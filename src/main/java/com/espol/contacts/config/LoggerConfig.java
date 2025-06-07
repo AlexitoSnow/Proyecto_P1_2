@@ -21,7 +21,7 @@ public class LoggerConfig {
 
         @Override
         public String format(LogRecord record) {
-            String color = record.getLevel() == Level.SEVERE ? RED : BLUE;
+            String color = record.getLevel() == Level.SEVERE || record.getLevel() == Level.WARNING ? RED : BLUE;
             String level = record.getLevel().getName();
             String timestamp = new java.text.SimpleDateFormat("HH:mm:ss")
                     .format(new java.util.Date(record.getMillis()));
