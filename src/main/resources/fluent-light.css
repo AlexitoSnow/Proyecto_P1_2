@@ -24,6 +24,11 @@
 
 .toggle-button {
     -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.button {
+    -fx-cursor: hand;
 }
 
 .toggle-button:selected {
@@ -40,6 +45,7 @@
 
 .contact-cell {
     -fx-background-color: transparent;
+    -fx-cursor: hand;
 }
 
 .contact-cell-selected {
@@ -48,6 +54,14 @@
 
 .contact-cell:hover {
     -fx-background-color: #e3e3e3;
+}
+
+.menu-button {
+    -fx-cursor: hand;
+}
+
+.menu-item {
+    -fx-cursor: hand;
 }
 
 .menu-button > .arrow-button {
