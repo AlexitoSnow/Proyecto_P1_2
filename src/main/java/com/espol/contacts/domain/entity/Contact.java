@@ -12,11 +12,13 @@ public class Contact implements Serializable {
     protected final Set<Address> addresses;
     protected final Set<ImportantDate> dates;
     protected final Set<SocialMedia> socialMedias;
-    protected final Set<RelatedContact> relatedContacts;
+    protected Set<RelatedContact> relatedContacts;
+    protected Set<byte[]> gallery;
     protected String name;
     protected String notes;
     protected ContactType contactType;
     protected Boolean favorite;
+    protected byte[] profilePicture;
 
     protected Contact(ContactBuilder<?> builder) {
         this.id = builder.id;
@@ -30,6 +32,7 @@ public class Contact implements Serializable {
         this.contactType = builder.contactType;
         this.favorite = builder.favorite;
         this.relatedContacts = builder.relatedContacts;
+        this.gallery = builder.gallery;
     }
 
     public static abstract class ContactBuilder<T extends ContactBuilder<T>> {
@@ -40,6 +43,7 @@ public class Contact implements Serializable {
         protected Set<ImportantDate> dates = new HashSet<>();
         protected Set<SocialMedia> socialMedias = new HashSet<>();
         protected Set<RelatedContact> relatedContacts = new HashSet<>();
+        protected Set<byte[]> gallery = new HashSet<>();
         protected String name;
         protected String notes;
         protected ContactType contactType;
@@ -80,6 +84,11 @@ public class Contact implements Serializable {
             return self();
         }
 
+        public T addImage(byte[] image) {
+            this.gallery.add(image);
+            return self();
+        }
+
         public T addRelatedContact(RelatedContact relatedContact) {
             this.relatedContacts.add(relatedContact);
             return self();
@@ -104,8 +113,16 @@ public class Contact implements Serializable {
         public abstract Contact build();
     }
 
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
     public Set<Email> getEmails() {
         return emails;
+    }
+
+    public Set<byte[]> getGallery() {
+        return gallery;
     }
 
     public Set<Phone> getPhones() {
@@ -144,12 +161,24 @@ public class Contact implements Serializable {
         return favorite;
     }
 
+    public Set<RelatedContact> getRelatedContacts() {
+        return relatedContacts;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Set<RelatedContact> getRelatedContacts() {
-        return relatedContacts;
+    public void setRelatedContacts(Set<RelatedContact> relatedContacts) {
+        this.relatedContacts = relatedContacts;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public void setGallery(Set<byte[]> gallery) {
+        this.gallery = gallery;
     }
 
     @Override
