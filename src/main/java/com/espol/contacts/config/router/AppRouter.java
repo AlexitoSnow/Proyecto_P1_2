@@ -4,7 +4,7 @@ import com.espol.contacts.App;
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.enums.ContactType;
-import com.espol.contacts.ui.screens.RegisterContactScreen;
+import com.espol.contacts.ui.screens.form.FormScreen;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -64,9 +64,9 @@ public class AppRouter {
             loader.setControllerFactory(type -> {
                 try {
                     Object controllerInstance = type.getDeclaredConstructor().newInstance();
-                    if (route.equals(Routes.REGISTER_CONTACT)) {
-                        if (data instanceof ContactType) ((RegisterContactScreen) controllerInstance).setContactType((ContactType) data);
-                        if (data instanceof Contact) ((RegisterContactScreen) controllerInstance).setContact((Contact) data);
+                    if (route.equals(Routes.FORM)) {
+                        if (data instanceof ContactType) ((FormScreen) controllerInstance).setContactType((ContactType) data);
+                        if (data instanceof Contact) ((FormScreen) controllerInstance).setContact((Contact) data);
                     }
                     return controllerInstance;
                 } catch (Exception e) {
