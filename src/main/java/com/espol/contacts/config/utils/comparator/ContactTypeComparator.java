@@ -1,7 +1,6 @@
 package com.espol.contacts.config.utils.comparator;
 
 import com.espol.contacts.domain.entity.Contact;
-import com.espol.contacts.domain.entity.enums.ContactType;
 
 import java.util.Comparator;
 

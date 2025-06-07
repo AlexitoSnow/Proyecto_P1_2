@@ -1,37 +1,38 @@
 package com.espol.contacts.infrastructure.datasource;
 
+import com.espol.contacts.config.SessionManager;
 import com.espol.contacts.config.constants.Constants;
-import com.espol.contacts.config.utils.ArrayList;
-import com.espol.contacts.config.utils.List;
-import com.espol.contacts.domain.datasource.BaseDatasource;
+import com.espol.contacts.config.utils.list.ArrayList;
+import com.espol.contacts.config.utils.list.List;
+import com.espol.contacts.config.utils.observer.Observer;
+import com.espol.contacts.domain.datasource.ContactsDatasource;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Phone;
 import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.infrastructure.exception.DuplicatedContactException;
-import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 
 import java.io.*;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ContactsDatasource implements BaseDatasource<Contact> {
+public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User> {
 
-    private final User user;
-    private final List<Contact> contacts;
+    private List<Contact> contacts;
 
-    private static ContactsDatasource instance;
-    private final static Logger LOGGER = Logger.getLogger(ContactsDatasource.class.getName());
+    private static ContactsDatasourceImpl instance;
+    private final static Logger LOGGER = Logger.getLogger(ContactsDatasourceImpl.class.getName());
 
-    private ContactsDatasource() {
-        this.user = UsersRepositoryImpl.getLoggedUser();
+    private ContactsDatasourceImpl() {
         List<Contact> deserializedList = deserializeFile();
         this.contacts = deserializedList != null ? deserializedList : new ArrayList<>();
+        SessionManager.getInstance().addObserver(this);
     }
 
-    public static ContactsDatasource getInstance() {
+    public static ContactsDatasourceImpl getInstance() {
         if (instance == null) {
-            instance = new ContactsDatasource();
+            instance = new ContactsDatasourceImpl();
+            LOGGER.info("Opening ContactsDatasourceImpl");
         }
         return instance;
     }
@@ -81,6 +82,7 @@ public class ContactsDatasource implements BaseDatasource<Contact> {
     }
 
     private File getFile() {
+        final User user = SessionManager.getInstance().getCurrentUser();
         final File file = new File(Constants.DIRECTORY_FOLDER, user.getUsername() + ".contacts");
         File parent = file.getParentFile();
         if (parent != null && !parent.exists()) {
@@ -103,6 +105,8 @@ public class ContactsDatasource implements BaseDatasource<Contact> {
         return file;
     }
 
+    // TODO: Review this method and the UsersDatasourceImpl.deserializeFile() method
+    // TODO: Merge them into config.utils.Serialization class
     private List<Contact> deserializeFile() {
         File file = getFile();
         if (file.length() == 0) {
@@ -119,6 +123,8 @@ public class ContactsDatasource implements BaseDatasource<Contact> {
         }
     }
 
+    // TODO: Review this method and the UsersDatasourceImpl.serializeFile() method
+    // TODO: Merge them into config.utils.Serialization class
     private void serialize(List<Contact> contacts){
         final File file = getFile();
         try {
@@ -131,6 +137,18 @@ public class ContactsDatasource implements BaseDatasource<Contact> {
         }catch(IOException e) {
             LOGGER.severe("Error al serializar los contactos: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update(User data) {
+        if (data == null) {
+            LOGGER.info("SessionManager ended, cleaning directory reference.");
+            this.contacts = new ArrayList<>();
+        } else {
+            LOGGER.info("SessionManager started, initializing directory reference.");
+            List<Contact> deserializedList = deserializeFile();
+            this.contacts = deserializedList != null ? deserializedList : new ArrayList<>();
         }
     }
 }

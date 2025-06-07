@@ -1,7 +1,7 @@
 package com.espol.contacts.domain.entity;
 
-import com.espol.contacts.config.utils.ArrayList;
-import com.espol.contacts.config.utils.List;
+import com.espol.contacts.config.utils.list.ArrayList;
+import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.domain.entity.enums.AddressType;
 
 import java.io.Serializable;

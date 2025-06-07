@@ -1,22 +1,21 @@
 package com.espol.contacts.infrastructure.repository;
 
-import com.espol.contacts.config.utils.ArrayList;
-import com.espol.contacts.config.utils.List;
+import com.espol.contacts.config.utils.list.ArrayList;
+import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
-import com.espol.contacts.domain.datasource.BaseDatasource;
+import com.espol.contacts.domain.datasource.ContactsDatasource;
 import com.espol.contacts.domain.entity.Contact;
-import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.domain.repository.ContactsRepository;
-import com.espol.contacts.infrastructure.datasource.ContactsDatasource;
+import com.espol.contacts.infrastructure.datasource.ContactsDatasourceImpl;
 
-public class ContactsRepositoryImpl implements ContactsRepository, Observer<User> {
-    private final BaseDatasource<Contact> datasource;
+public class ContactsRepositoryImpl implements ContactsRepository {
+    private final ContactsDatasource datasource;
     private final List<Observer<Contact>> observers;
 
     private static ContactsRepositoryImpl instance;
 
     private ContactsRepositoryImpl() {
-        this.datasource = ContactsDatasource.getInstance();
+        this.datasource = ContactsDatasourceImpl.getInstance();
         this.observers = new ArrayList<>();
     }
 
@@ -58,10 +57,5 @@ public class ContactsRepositoryImpl implements ContactsRepository, Observer<User
     @Override
     public void notifyObservers(Contact data) {
         observers.forEach(observer -> observer.update(data));
-    }
-
-    @Override
-    public void update(User data) {
-        instance = null; // Reset instance when user changes
     }
 }
