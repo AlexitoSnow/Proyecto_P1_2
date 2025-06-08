@@ -3,39 +3,40 @@ package com.espol.contacts.config.utils.list;
 import java.io.Serializable;
 import java.util.Comparator;
 
-// TODO: Add contains method to check if an element exists in the list
-// TODO: Add indexOf method to find the index of an element
-// TODO: Remove public modifier, as it is redundant in an interface
-// TODO: Remove comments that are not necessary for understanding the code
+
 public interface List<E> extends Iterable<E>, Serializable {
 
-    public int size();
+    int size();
 
-    public boolean isEmpty();
+    boolean isEmpty();
 
-    public void clear();
+    void clear();
 
-    public boolean addFirst(E element); // inserta E al inicio
+    boolean addFirst(E element);
 
-    public boolean addLast(E element); // inserta E al final
+    boolean addLast(E element);
 
-    public E removeFirst(); // remueve E al inicio
+    E removeFirst();
 
-    public E removeLast(); // remueve E al final
+    E removeLast();
 
-    public boolean add(int index, E element); // inserta E en posición index
+    boolean add(int index, E element);
 
-    public E remove(int index); // remueve y retorna E en posición index
+    E remove(int index);
 
-    public E remove(E elemento); // remueve E
+    E remove(E elemento);
 
-    public E get(int index); // retorna E ubicado en la posición index
+    E get(int index);
 
-    public E set(int index, E element); // setea E en la posición index
+    E set(int index, E element);
 
-    public E getPrevious(E actual);
+    E getPrevious(E actual);
 
-    public E getNext(E actual);
+    E getNext(E actual);
+
+    boolean contains(E element);
+
+    int indexOf(E element);
 
     default void sort(Comparator<E> comparator) {
         int n = this.size();

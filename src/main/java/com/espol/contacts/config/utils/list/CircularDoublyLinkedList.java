@@ -213,6 +213,25 @@ public class CircularDoublyLinkedList<E> implements List<E> {
     }
 
     @Override
+    public boolean contains(E element) {
+        return indexOf(element) != -1;
+    }
+
+    @Override
+    public int indexOf(E element) {
+        if (isEmpty()) return -1;
+
+        Node<E> current = head;
+        for (int i = 0; i < size; i++) {
+            if (current.getElement().equals(element)) {
+                return i;
+            }
+            current = current.getNext();
+        }
+        return -1;
+    }
+
+    @Override
     public String toString() {
         if (isEmpty()) return "[]";
 
