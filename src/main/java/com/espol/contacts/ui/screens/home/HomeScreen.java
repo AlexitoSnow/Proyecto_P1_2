@@ -2,7 +2,7 @@ package com.espol.contacts.ui.screens.home;
 
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.router.*;
-import com.espol.contacts.config.utils.list.ArrayList;
+import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
 import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
 import com.espol.contacts.domain.entity.*;
@@ -111,8 +111,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
         Platform.runLater(() -> {
             contactsListView.getChildren().clear();
 
-
-            List<Contact> filtered = new ArrayList<>();
+            List<Contact> filtered = new CircularDoublyLinkedList<>();
             for (Contact contact : allContactsData) {
                 if (currentFilterPredicate.test(contact) && currentSearchPredicate.test(contact)) {
                     filtered.addLast(contact);

@@ -3,7 +3,7 @@ package com.espol.contacts.infrastructure.datasource;
 import com.espol.contacts.config.SessionManager;
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.utils.Serialization;
-import com.espol.contacts.config.utils.list.ArrayList;
+import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
 import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
 import com.espol.contacts.domain.datasource.ContactsDatasource;
@@ -28,7 +28,7 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
         SessionManager sessionManager = SessionManager.getInstance();
         if (!sessionManager.isLoggedIn()) {
             LOGGER.info("SessionManager is not initialized, initializing with empty contacts list.");
-            this.contacts = new ArrayList<>();
+            this.contacts = new CircularDoublyLinkedList<>();
             return;
         } else {
             LOGGER.info("SessionManager is initialized, loading contacts from file.");
@@ -38,7 +38,7 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
                 this.contacts = deserializedList.get();
                 LOGGER.info("Contacts loaded successfully.");
             } else {
-                this.contacts = new ArrayList<>();
+                this.contacts = new CircularDoublyLinkedList<>();
                 LOGGER.warning("No contacts found, initializing with empty list.");
             }
         }
@@ -102,7 +102,7 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
         if (data == null) {
             LOGGER.info("SessionManager ended, cleaning directory reference.");
             fileName = null;
-            this.contacts = new ArrayList<>();
+            this.contacts = new CircularDoublyLinkedList<>();
         } else {
             LOGGER.info("SessionManager started, initializing directory reference.");
             fileName = Constants.DIRECTORY_FOLDER + File.separator + data.getUsername() + ".contacts";
@@ -111,7 +111,7 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
                 this.contacts = deserializedList.get();
                 LOGGER.info("Contacts loaded successfully.");
             } else {
-                this.contacts = new ArrayList<>();
+                this.contacts = new CircularDoublyLinkedList<>();
                 LOGGER.warning("No contacts found, initializing with empty list.");
             }
         }
