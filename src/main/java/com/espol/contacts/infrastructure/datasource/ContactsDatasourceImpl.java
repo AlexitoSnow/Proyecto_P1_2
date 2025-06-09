@@ -12,9 +12,8 @@ import com.espol.contacts.domain.entity.Phone;
 import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.infrastructure.exception.DuplicatedContactException;
 
-import java.io.*;
+import java.io.File;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User> {
@@ -23,10 +22,26 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
 
     private static ContactsDatasourceImpl instance;
     private final static Logger LOGGER = Logger.getLogger(ContactsDatasourceImpl.class.getName());
+    private static String fileName;
 
     private ContactsDatasourceImpl() {
-        List<Contact> deserializedList = Serialization.deSerializeFile("NO_NAME",false);
-        this.contacts = deserializedList != null ? deserializedList : new ArrayList<>();
+        SessionManager sessionManager = SessionManager.getInstance();
+        if (!sessionManager.isLoggedIn()) {
+            LOGGER.info("SessionManager is not initialized, initializing with empty contacts list.");
+            this.contacts = new ArrayList<>();
+            return;
+        } else {
+            LOGGER.info("SessionManager is initialized, loading contacts from file.");
+            fileName = Constants.DIRECTORY_FOLDER + File.separator + sessionManager.getCurrentUser().getUsername() + ".contacts";
+            Optional<List<Contact>> deserializedList = Serialization.deserializeFile(fileName);
+            if (deserializedList.isPresent()) {
+                this.contacts = deserializedList.get();
+                LOGGER.info("Contacts loaded successfully.");
+            } else {
+                this.contacts = new ArrayList<>();
+                LOGGER.warning("No contacts found, initializing with empty list.");
+            }
+        }
         SessionManager.getInstance().addObserver(this);
     }
 
@@ -65,36 +80,40 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
             if (c.equals(contact)) {
                 contacts.set(i, contact);
                 LOGGER.info("Actualizando contacto ID: " + contact.getId());
-                Serialization.serializeFile(contacts,"NO:NAME",false);
+                Serialization.serializeFile(contacts, fileName);
                 return contact;
             }
         }
         contact.setId(contacts.size() + 1L);
         contacts.addLast(contact);
         LOGGER.info("Guardando contacto ID: " + contact.getId());
-        Serialization.serializeFile(contacts,"NO:NAME",false);
+        Serialization.serializeFile(contacts, fileName);
         return contact;
     }
 
     @Override
     public void delete(Contact contact) {
         contacts.remove(contact);
-        Serialization.serializeFile(contacts,"NO:NAME",false);
+        Serialization.serializeFile(contacts,fileName);
     }
-
-
-
-
 
     @Override
     public void update(User data) {
         if (data == null) {
             LOGGER.info("SessionManager ended, cleaning directory reference.");
+            fileName = null;
             this.contacts = new ArrayList<>();
         } else {
             LOGGER.info("SessionManager started, initializing directory reference.");
-            List<Contact> deserializedList = Serialization.deSerializeFile("NO_NAME",false);
-            this.contacts = deserializedList != null ? deserializedList : new ArrayList<>();
+            fileName = Constants.DIRECTORY_FOLDER + File.separator + data.getUsername() + ".contacts";
+            Optional<List<Contact>> deserializedList = Serialization.deserializeFile(fileName);
+            if (deserializedList.isPresent()) {
+                this.contacts = deserializedList.get();
+                LOGGER.info("Contacts loaded successfully.");
+            } else {
+                this.contacts = new ArrayList<>();
+                LOGGER.warning("No contacts found, initializing with empty list.");
+            }
         }
     }
 }
