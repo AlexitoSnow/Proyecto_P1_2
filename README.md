@@ -1,5 +1,14 @@
 # Contacts App
 
+# Usuario agregado
+
+Usa las siguientes credenciales para iniciar sesión:
+
+- **Usuario:** `admin`
+- **Contraseña:** `admin`
+
+También puedes crear un nuevo usuario desde la aplicación.
+
 ## Referencias
 
 - [Philia Contacts](https://apps.microsoft.com/detail/9MXHT996K5ST): Aplicación de Escritorio para gestionar contactos. Nos ayudó a tener una referencia sobre cómo luce una libreta de contactos en el sistema operativo de Windows.
