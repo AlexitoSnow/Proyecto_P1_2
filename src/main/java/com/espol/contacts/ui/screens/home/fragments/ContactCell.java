@@ -58,7 +58,6 @@ public class ContactCell extends HBox implements Initializable {
         }
     }
 
-    // TODO: Fix the displayName logic, the lastName should not be appended if it is null
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.setPadding(new Insets(8));
@@ -67,7 +66,8 @@ public class ContactCell extends HBox implements Initializable {
         String displayName = this.contact.getName();
         if (this.contact instanceof Person) {
             final Person person = (Person) this.contact;
-            displayName = displayName + " " + person.getLastName();
+            if (person.getLastName() != null && !person.getLastName().isEmpty())
+                displayName = displayName + " " + person.getLastName();
         }
         nameLabel.setText(displayName);
         nameTooltip.setText(displayName);
