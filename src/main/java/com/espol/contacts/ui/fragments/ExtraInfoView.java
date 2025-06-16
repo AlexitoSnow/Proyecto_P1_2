@@ -1,8 +1,11 @@
 package com.espol.contacts.ui.fragments;
 
+import com.espol.contacts.config.SessionManager;
+import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.constants.Icons;
 import com.espol.contacts.config.router.AppRouter;
 import com.espol.contacts.config.router.Routes;
+import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.RelatedContact;
 import com.espol.contacts.domain.repository.ContactsRepository;
@@ -10,32 +13,33 @@ import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ExtraInfoView extends ScrollPane {
-    @FXML
-    private FontIcon editProfileButton;
     @FXML
     private FontIcon favoriteIcon;
     @FXML
     private Button galleryButton;
     @FXML
     private FlowPane imageGallery;
-    @FXML
-    private StackPane profilePicture;
     @FXML
     private HBox quickActionsToolbar;
     @FXML
@@ -48,10 +52,15 @@ public class ExtraInfoView extends ScrollPane {
     private TitledPane relatedTitlePane;
     @FXML
     private ToggleButton favoriteButton;
+    @FXML
+    private VBox mainPane;
 
+    private ProfilePicture profilePicture;
     private Contact contact;
     private ContactsRepository repository;
     private boolean isEditable;
+
+    private static final Logger LOGGER = Logger.getLogger(ExtraInfoView.class.getName());
 
     public ExtraInfoView(Contact contact, boolean isEditable) {
         this.contact = contact;
@@ -71,14 +80,12 @@ public class ExtraInfoView extends ScrollPane {
 
     @FXML
     void initialize() {
+        profilePicture = new ProfilePicture(null, 100, isEditable);
+        mainPane.getChildren().add(0, profilePicture);
         if (isEditable) { // Modo edición
-            editProfileButton.setVisible(true);
-            editProfileButton.setManaged(true);
 
             quickActionsToolbar.setVisible(false);
             quickActionsToolbar.setManaged(false);
-
-            profilePicture.setCursor(Cursor.HAND);
 
             galleryButton.setVisible(true);
             galleryButton.setManaged(true);
@@ -86,13 +93,9 @@ public class ExtraInfoView extends ScrollPane {
             relatedContactsButton.setManaged(true);
 
         } else { // Modo vista
-            editProfileButton.setVisible(false);
-            editProfileButton.setManaged(false);
 
             quickActionsToolbar.setVisible(true);
             quickActionsToolbar.setManaged(true);
-
-            profilePicture.setCursor(null);
 
             galleryButton.setVisible(false);
             galleryButton.setManaged(false);
@@ -111,17 +114,31 @@ public class ExtraInfoView extends ScrollPane {
         setRelatedContacts();
     }
 
-    // TODO: Request a image picker to add ImageView instances to the imageGallery FlowPane
-    // TODO: Wrap the ImageView into a StackPane
-    // TODO: Add a remove button at the top right corner of the StackPane to remove the Stack from the FlowPane
     @FXML
     void onAddGallery(ActionEvent event) {
         galleryTitlePane.setExpanded(true);
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Agregar imagen a la galería");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
+        var file = chooser.showOpenDialog(this.getScene().getWindow());
+        if (file != null) {
+            ImageGallery imageGalleryItem = new ImageGallery(file.getAbsolutePath(), isEditable);
+            imageGallery.getChildren().add(imageGalleryItem);
+            if (isEditable) {
+                imageGalleryItem.setOnRemove(e -> {
+                    imageGallery.getChildren().remove(imageGalleryItem);
+                    if (imageGallery.getChildren().isEmpty()) {
+                        galleryTitlePane.setExpanded(false);
+                    }
+                });
+            }
+        }
+        galleryTitlePane.setExpanded(!imageGallery.getChildren().isEmpty());
     }
 
     @FXML
     void onAddRelated(ActionEvent event) {
-        RelatedContactBox relatedContactBox = new RelatedContactBox(isEditable);
+        RelatedContactBox relatedContactBox = new RelatedContactBox(isEditable, contact);
         relatedContactBox.setOnRemoveAction(e -> {
             relatedContacts.getChildren().remove(relatedContactBox);
         });
@@ -129,18 +146,10 @@ public class ExtraInfoView extends ScrollPane {
         relatedTitlePane.setExpanded(true);
     }
 
-    // TODO: Request a image picker to add a profile picture to the profilePicture StackPane
-    // TODO: The ImageView will be placed at the index 1 of the StackPane
-    @FXML
-    void onEditProfile(MouseEvent event) {
-        if (!isEditable) return;
-        // Add logic after the condition
-    }
-
     @FXML
     void onToggleFavorite(ActionEvent event) {
         contact.setFavorite(!contact.isFavorite());
-        favoriteIcon.setIconLiteral(contact.isFavorite() ? Icons.SOLID_STAR :Icons.REGULAR_STAR);
+        favoriteIcon.setIconLiteral(contact.isFavorite() ? Icons.S_STAR :Icons.REGULAR_STAR);
         repository.save(contact);
     }
 
@@ -154,42 +163,159 @@ public class ExtraInfoView extends ScrollPane {
         repository.delete(contact);
     }
 
-    // TODO: Obtain the images from the imageGallery FlowPane and obtain the byte[] from each ImageView
-    // TODO: Remember that the imageGallery FlowPane can contain multiple StackPanes, each with an ImageView (we need this) and a remove button
-    // TODO: You will need to cast the children of the FlowPane to StackPane and then get the ImageView (index 0) from each StackPane
-    public Set<byte[]> getGalleryImages() {
-        return null;
+    public Set<String> getGalleryImages(String contactName) {
+        String path = Constants.GALLERY_FOLDER +
+                File.separator +
+                SessionManager.getInstance().getCurrentUser().getUsername() +
+                File.separator +
+                contactName +
+                File.separator;
+
+        Set<String> images = imageGallery.getChildren().stream().map(node -> {
+            final ImageGallery imageGallery = (ImageGallery) node;
+            String imagePath = imageGallery.getImage();
+            if (imagePath.contains("app/gallery")) {
+                // If the image is already in the gallery, return it
+                return imagePath;
+            } else {
+                // Otherwise, copy it to the gallery folder
+                String copiedPath = copyTo(imagePath, path, null);
+                if (copiedPath != null) {
+                    return copiedPath;
+                }
+            }
+            return imagePath;
+        }).collect(Collectors.toSet());
+
+        File directory = new File(path);
+        if (directory.exists()) {
+            for (File file : directory.listFiles()) {
+                String fileName = file.getName();
+                boolean existsInGallery = images.stream().anyMatch(imgPath -> imgPath.endsWith(fileName));
+                if (!existsInGallery) {
+                    file.delete();
+                }
+            }
+        }
+        return images;
     }
 
-    // TODO: Obtain the related contacts from the relatedContacts VBox
-    // TODO: RelatedContactBox has a method to get the value
-    // TODO: IMPORTANT: You need to search the phone number in the repository to ensure that the related contact exists before adding it to the set
     public Set<RelatedContact> getRelatedContacts() {
-        return null;
+        return relatedContacts.getChildren().stream()
+                .map(node -> ((RelatedContactBox) node).getValue())
+                .filter(rc -> rc != null)
+                .collect(Collectors.toSet());
     }
 
-    // TODO: Obtain the profile picture from the profilePicture StackPane (ImageView at index 1)
-    public byte[] getProfilePicture() {
-        return null;
-    }
-
-    // TODO: Set the profile picture in the profilePicture StackPane (ImageView at index 1)
-    // TODO: Remember that the profilePicture could be null, use the contact.getProfilePicture()
-    private void setProfilePicture() {
-    }
-
-    // TODO: Add the contacts.getGallery() to the imageGallery FlowPane
-    private void setGallery() {
-        // TODO: In editable mode, we need the remove button on each image (StackPane with ImageView and remove button)
-        if (isEditable) {
-
-        } else { // TODO: In view mode, we just need to display the images (ImageView)
-
+    public void setProfilePicture() {
+        if (contact == null) return;
+        if (contact.getProfilePicture() != null) {
+            profilePicture.setImage(contact.getProfilePicture());
         }
     }
 
-    // TODO: Add the contacts.getRelatedContacts() to the relatedContacts VBox
-    private void setRelatedContacts() {
+    public String getProfilePicture(String contactName) {
+        String path = Constants.GALLERY_FOLDER +
+                File.separator +
+                SessionManager.getInstance().getCurrentUser().getUsername() +
+                File.separator +
+                contactName +
+                File.separator + "profile" + File.separator;
+        String profilePath = profilePicture.getImage();
+        if (profilePath != null) {
+            if (profilePath.contains("app/gallery")) {
+                // If the image is already in the gallery, return it
+                return profilePath;
+            } else {
+                // Otherwise, copy it to the gallery folder
+                String copiedPath = copyTo(profilePath, path, "profile");
+                if (copiedPath != null) {
+                    return copiedPath;
+                }
+            }
+        }
+        return null;
+    }
 
+    private void setGallery() {
+        if (isEditable) {
+            if (contact == null) return;
+            contact.getGallery().forEach(
+                    path -> {
+                        if (!new File(path).exists()) return;
+                        ImageGallery imageGalleryItem = new ImageGallery(path, true);
+                        imageGalleryItem.setOnRemove(e -> {
+                            imageGallery.getChildren().remove(imageGalleryItem);
+                            if (imageGallery.getChildren().isEmpty()) {
+                                galleryTitlePane.setExpanded(false);
+                            }
+                        });
+                        imageGallery.getChildren().add(imageGalleryItem);
+                    }
+            );
+        } else {
+            contact.getGallery().forEach(
+                    path -> {
+                        if (!new File(path).exists()) return;
+                        ImageGallery imageGalleryItem = new ImageGallery(path, false);
+                        imageGalleryItem.setOnShow(e -> {
+                            final CircularDoublyLinkedList<String> imagePaths = new CircularDoublyLinkedList<>();
+                            imageGallery.getChildren().forEach(node -> {
+                                if (node instanceof ImageGallery) {
+                                    ImageGallery galleryItem = (ImageGallery) node;
+                                    String imagePath = galleryItem.getImage();
+                                    imagePaths.addLast(imagePath);
+                                }
+                            });
+                            AppRouter.openNewWindow(Routes.EXPLORER, "Explorador de Imágenes", Map.of("list", imagePaths, "index", imageGallery.getChildren().indexOf(imageGalleryItem)));
+                        });
+                        imageGallery.getChildren().add(imageGalleryItem);
+                    }
+            );
+        }
+    }
+
+    private void setRelatedContacts() {
+        if (isEditable) {
+            if (contact == null) return;
+            contact.getRelatedContacts().forEach(
+                    relatedContact -> {
+                        RelatedContactBox relatedContactBox = new RelatedContactBox(true, contact);
+                        relatedContactBox.setValue(relatedContact);
+                        relatedContactBox.setOnRemoveAction(e -> {
+                            relatedContacts.getChildren().remove(relatedContactBox);
+                        });
+                        relatedContacts.getChildren().add(relatedContactBox);
+                    }
+            );
+        } else {
+            contact.getRelatedContacts().forEach(
+                    relatedContact -> {
+                        RelatedContactBox relatedContactBox = new RelatedContactBox(false, contact);
+                        relatedContactBox.setValue(relatedContact);
+                        relatedContacts.getChildren().add(relatedContactBox);
+                    }
+            );
+        }
+    }
+
+    private String copyTo(String currentFile, String destinationFolder, String newName) {
+        currentFile = URLDecoder.decode(currentFile, StandardCharsets.UTF_8);
+        try {
+            String fileName = currentFile.substring(currentFile.lastIndexOf("/") + 1);
+            String extension = fileName.substring(fileName.lastIndexOf("."));
+            String finalName = (newName != null) ? newName + extension : fileName;
+            File sourceFile = new File(currentFile);
+            File destinationFile = new File(destinationFolder + File.separator + finalName);
+            destinationFile.getParentFile().mkdirs();
+
+            LOGGER.info("Copying image from: " + sourceFile.getAbsolutePath() + "\nto: " + destinationFile.getAbsolutePath());
+            Files.copy(sourceFile.toPath(), destinationFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            return destinationFile.getAbsolutePath();
+        } catch (java.io.IOException e) {
+            LOGGER.severe("Error copying image: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 }
