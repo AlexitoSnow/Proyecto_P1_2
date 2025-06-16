@@ -3,7 +3,9 @@ package com.espol.contacts.domain.entity;
 import com.espol.contacts.domain.entity.enums.ContactType;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class Contact implements Serializable {
     protected Long id;
@@ -13,12 +15,12 @@ public class Contact implements Serializable {
     protected final Set<ImportantDate> dates;
     protected final Set<SocialMedia> socialMedias;
     protected Set<RelatedContact> relatedContacts;
-    protected Set<byte[]> gallery;
+    protected Set<String> gallery;
     protected String name;
     protected String notes;
     protected ContactType contactType;
     protected Boolean favorite;
-    protected byte[] profilePicture;
+    protected String profilePicture;
 
     protected Contact(ContactBuilder<?> builder) {
         this.id = builder.id;
@@ -33,6 +35,7 @@ public class Contact implements Serializable {
         this.favorite = builder.favorite;
         this.relatedContacts = builder.relatedContacts;
         this.gallery = builder.gallery;
+        this.profilePicture = builder.profilePicture;
     }
 
     public static abstract class ContactBuilder<T extends ContactBuilder<T>> {
@@ -43,11 +46,12 @@ public class Contact implements Serializable {
         protected Set<ImportantDate> dates = new HashSet<>();
         protected Set<SocialMedia> socialMedias = new HashSet<>();
         protected Set<RelatedContact> relatedContacts = new HashSet<>();
-        protected Set<byte[]> gallery = new HashSet<>();
+        protected Set<String> gallery = new HashSet<>();
         protected String name;
         protected String notes;
         protected ContactType contactType;
         protected Boolean favorite = false;
+        protected String profilePicture;
 
         public T id(Long id) {
             this.id = id;
@@ -56,6 +60,11 @@ public class Contact implements Serializable {
 
         public T name(String name) {
             this.name = name;
+            return self();
+        }
+
+        public T profilePicture(String profilePicture) {
+            this.profilePicture = profilePicture;
             return self();
         }
 
@@ -84,7 +93,7 @@ public class Contact implements Serializable {
             return self();
         }
 
-        public T addImage(byte[] image) {
+        public T addImage(String image) {
             this.gallery.add(image);
             return self();
         }
@@ -113,7 +122,7 @@ public class Contact implements Serializable {
         public abstract Contact build();
     }
 
-    public byte[] getProfilePicture() {
+    public String getProfilePicture() {
         return profilePicture;
     }
 
@@ -121,7 +130,7 @@ public class Contact implements Serializable {
         return emails;
     }
 
-    public Set<byte[]> getGallery() {
+    public Set<String> getGallery() {
         return gallery;
     }
 
@@ -169,16 +178,8 @@ public class Contact implements Serializable {
         this.id = id;
     }
 
-    public void setRelatedContacts(Set<RelatedContact> relatedContacts) {
-        this.relatedContacts = relatedContacts;
-    }
-
-    public void setProfilePicture(byte[] profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public void setGallery(Set<byte[]> gallery) {
-        this.gallery = gallery;
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     @Override
@@ -193,7 +194,8 @@ public class Contact implements Serializable {
         return Objects.hashCode(id);
     }
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
+    @Override
+    public String toString() {
+        return name;
     }
 }
