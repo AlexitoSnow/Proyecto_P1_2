@@ -5,44 +5,34 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<fx:root alignment="CENTER" maxWidth="1.7976931348623157E308" prefWidth="400.0" minHeight="-Infinity"
-         minWidth="-Infinity" spacing="8.0" styleClass="contact-cell" type="HBox"
-         xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" spacing="8.0" styleClass="contact-cell" type="HBox" xmlns="http://javafx.com/javafx/21.0.2" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
-        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
     </padding>
-    <StackPane>
-        <FontIcon fx:id="profileIcon" iconLiteral="fas-user-circle" iconSize="60"/>
-        <ImageView fx:id="profileImage" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
-    </StackPane>
-    <Label fx:id="nameLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label"
-           HBox.hgrow="ALWAYS">
+    <Label fx:id="nameLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" HBox.hgrow="ALWAYS">
         <tooltip>
-          <Tooltip fx:id="nameTooltip" text="Empty Tooltip"/>
+          <Tooltip fx:id="nameTooltip" text="Empty Tooltip" />
         </tooltip>
     </Label>
-    <MenuButton fx:id="trailing" maxHeight="1.7976931348623157E308" mnemonicParsing="false"
-                styleClass="text-icon-button">
+    <MenuButton fx:id="trailing" maxHeight="1.7976931348623157E308" mnemonicParsing="false" styleClass="text-icon-button">
       <items>
-          <MenuItem fx:id="favoriteMenuItem" mnemonicParsing="false" onAction="#toggleFavorite" text="Favoritos"/>
+          <MenuItem fx:id="favoriteMenuItem" mnemonicParsing="false" onAction="#toggleFavorite" text="Favoritos" />
           <MenuItem mnemonicParsing="false" onAction="#onEdit" text="Editar">
               <graphic>
-                  <FontIcon iconLiteral="fas-edit"/>
+                  <FontIcon iconLiteral="fas-edit" />
               </graphic>
           </MenuItem>
           <MenuItem mnemonicParsing="false" onAction="#onDelete" text="Eliminar">
               <graphic>
-                  <FontIcon iconLiteral="fas-trash"/>
+                  <FontIcon iconLiteral="fas-trash" />
               </graphic>
           </MenuItem>
       </items>
         <graphic>
-          <FontIcon iconLiteral="mdmz-more_vert" iconSize="20"/>
+          <FontIcon iconLiteral="mdmz-more_vert" iconSize="20" />
         </graphic>
     </MenuButton>
 </fx:root>
