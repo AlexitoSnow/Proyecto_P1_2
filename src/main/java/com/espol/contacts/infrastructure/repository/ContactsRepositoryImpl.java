@@ -5,14 +5,21 @@ import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
 import com.espol.contacts.domain.datasource.ContactsDatasource;
 import com.espol.contacts.domain.entity.Contact;
+import com.espol.contacts.domain.entity.Phone;
+import com.espol.contacts.domain.entity.RelatedContact;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.datasource.ContactsDatasourceImpl;
+import com.espol.contacts.infrastructure.exception.DuplicatedPhoneException;
+
+import java.util.logging.Logger;
 
 public class ContactsRepositoryImpl implements ContactsRepository {
     private final ContactsDatasource datasource;
     private final List<Observer<Contact>> observers;
 
     private static ContactsRepositoryImpl instance;
+
+    private static final Logger LOGGER = Logger.getLogger(ContactsRepositoryImpl.class.getName());
 
     private ContactsRepositoryImpl() {
         this.datasource = ContactsDatasourceImpl.getInstance();
@@ -32,7 +39,33 @@ public class ContactsRepositoryImpl implements ContactsRepository {
     }
 
     @Override
-    public Contact save(Contact contact) {
+    public List<Contact> getAllByName(String name) {
+        return datasource.getAllByName(name);
+    }
+
+    @Override
+    public Contact save(Contact contact) throws DuplicatedPhoneException {
+        final var existingContact = datasource.getById(contact.getId());
+
+        if (existingContact.isEmpty()) {
+            for (Phone phone : contact.getPhones()) {
+                if (datasource.getByPhone(phone).isPresent()) {
+                    LOGGER.severe("El número de teléfono ya existe en otro contacto.");
+                    throw new DuplicatedPhoneException(phone.getNumber());
+                }
+            }
+        }
+
+        if (existingContact.isPresent()){
+            for (Contact c : datasource.getAll()) {
+                for (RelatedContact relatedContact : c.getRelatedContacts()) {
+                    if (relatedContact.getContact().equals(existingContact.get())) {
+                        relatedContact.setContact(contact);
+                    }
+                }
+            }
+        }
+
         final Contact saved = datasource.save(contact);
         notifyObservers(contact);
         return saved;
@@ -40,6 +73,10 @@ public class ContactsRepositoryImpl implements ContactsRepository {
 
     @Override
     public void delete(Contact contact) {
+        final var existingContact = datasource.getById(contact.getId());
+        for (Contact c : datasource.getAll()) {
+            c.getRelatedContacts().removeIf(relatedContact -> relatedContact.getContact().equals(existingContact.get()));
+        }
         datasource.delete(contact);
         notifyObservers(null);
     }
