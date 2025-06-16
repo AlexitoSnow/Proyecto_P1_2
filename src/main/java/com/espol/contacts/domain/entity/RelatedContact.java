@@ -6,11 +6,11 @@ import java.io.Serializable;
 
 public class RelatedContact implements Serializable {
     private Relationship relationship;
-    private String phoneNumber;
+    private Contact contact;
 
-    public RelatedContact(Relationship relationship, String phoneNumber) {
+    public RelatedContact(Relationship relationship, Contact contact) {
         this.relationship = relationship;
-        this.phoneNumber = phoneNumber;
+        this.contact = contact;
     }
 
     public Relationship getRelationship() {
@@ -21,11 +21,11 @@ public class RelatedContact implements Serializable {
         this.relationship = relationship;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public Contact getContact() {
+        return contact;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setContact(Contact contact) {
+        this.contact = contact;
     }
 }
