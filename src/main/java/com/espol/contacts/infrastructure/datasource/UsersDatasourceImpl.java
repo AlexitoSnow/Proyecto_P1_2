@@ -1,9 +1,9 @@
 package com.espol.contacts.infrastructure.datasource;
 
 import com.espol.contacts.config.constants.Constants;
+import com.espol.contacts.config.utils.Serialization;
 import com.espol.contacts.domain.datasource.UsersDatasource;
 import com.espol.contacts.domain.entity.User;
-import com.espol.contacts.config.utils.Serialization;
 
 import java.io.File;
 import java.util.Optional;

@@ -1,8 +1,8 @@
 package com.espol.contacts.ui.screens.register;
 
 import com.espol.contacts.config.SessionManager;
-import com.espol.contacts.config.router.*;
-
+import com.espol.contacts.config.router.AppRouter;
+import com.espol.contacts.config.router.Routes;
 import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.domain.repository.UsersRepository;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;

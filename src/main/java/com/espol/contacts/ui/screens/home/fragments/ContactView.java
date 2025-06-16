@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
+import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.awt.*;
@@ -35,6 +36,7 @@ public class ContactView extends VBox {
         public ContactViewBuilder companyBuilder(Company contact) {
             this.contactView = new ContactView();
             contactView.getChildren().add(new AttributeViewField("Company Name", contact.getName(), FontAwesomeRegular.BUILDING));
+            contactView.getChildren().add(new AttributeViewField("Industry", contact.getIndustry().name(), FontAwesomeSolid.INDUSTRY));
             addCommonAttributes(contact);
             return this;
         }

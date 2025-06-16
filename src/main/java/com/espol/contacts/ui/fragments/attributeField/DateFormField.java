@@ -5,7 +5,6 @@ import com.espol.contacts.domain.entity.enums.DateType;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 import java.time.LocalDate;

@@ -1,7 +1,6 @@
 package com.espol.contacts.config.utils.list;
 
 import java.util.Iterator;
-import java.io.Serializable;
 import java.util.NoSuchElementException;
 
 

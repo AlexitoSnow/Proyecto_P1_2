@@ -12,8 +12,6 @@ import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.awt.event.ActionEvent;
-
 public class AttributeViewField extends Button {
 
     private final FontIcon trailing;
