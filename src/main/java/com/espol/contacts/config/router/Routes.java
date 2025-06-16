@@ -8,10 +8,12 @@ import java.io.File;
  */
 public class Routes {
 
+
     private Routes(){}
 
     public static final String LOGIN = "login" + File.separator + "LoginScreen";
     public static final String REGISTER = "register" + File.separator + "RegisterScreen";
     public static final String HOME = "home" + File.separator + "HomeScreen";
     public static final String FORM = "form" + File.separator + "FormScreen";
+    public static final String EXPLORER = "explorer" + File.separator + "ImageExplorerScreen";
 }
