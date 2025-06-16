@@ -9,16 +9,22 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.kordamp.ikonli.material2.Material2MZ.PLUS;
 
@@ -32,6 +38,7 @@ public class ContactForm extends VBox {
     private SimpleFormField middleNameField;
     private SimpleFormField lastNameField;
     private SimpleFormField notesField;
+    private ChoiceFormField<IndustryType> industryField;
 
     // TitledPanes
     private final TitledPane phonesTitledPane;
@@ -139,7 +146,8 @@ public class ContactForm extends VBox {
             );
         } else {
             nameField = new SimpleFormField("Nombre de la empresa", FontAwesomeSolid.BUILDING);
-            this.getChildren().add(nameField);
+            industryField = new ChoiceFormField<>("Industria", IndustryType.values(), FontAwesomeSolid.INDUSTRY);
+            this.getChildren().addAll(nameField, industryField);
         }
 
         // Campo de notas
@@ -167,6 +175,8 @@ public class ContactForm extends VBox {
             Person person = (Person) contact;
             middleNameField.setValue(person.getMiddleName());
             lastNameField.setValue(person.getLastName());
+        } else {
+            industryField.setValue(((Company) contact).getIndustry());
         }
 
         // Phones
@@ -276,76 +286,66 @@ public class ContactForm extends VBox {
     }
 
     public Contact getContact() {
-        if (buildContact()) return contact;
-        return null;
+        return contact;
     }
 
-    private boolean buildContact() {
-        if (nameField.getValue() == null || nameField.getValue().isBlank()) {
-            Notifications.create()
-                    .title("Error: Creación de contacto")
-                    .text("El campo nombre es obligatorio")
-                    .graphic(new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE))
-                    .show();
-            return false;
-        }
+    public String getName() {
+        return nameField.getValue();
+    }
 
-        Contact.ContactBuilder<?> contactBuilder;
-        if (contactType == ContactType.Persona) {
-            contactBuilder = Person.builder()
-                    .name(nameField.getValue())
-                    .middleName(middleNameField.getValue())
-                    .lastName(lastNameField.getValue())
-                    .contactType(ContactType.Persona);
-        } else {
-            contactBuilder = Company.builder()
-                    .name(nameField.getValue())
-                    .contactType(ContactType.Empresa);
-        }
+    public String getMiddleName() {
+        return middleNameField.getValue();
+    }
 
-        if (this.contact != null) {
-            contactBuilder.id(this.contact.getId());
-            contactBuilder.favorite(this.contact.isFavorite());
-        } else {
-            contactBuilder.favorite(false);
-        }
+    public String getLastName() {
+        return lastNameField.getValue();
+    }
 
-        contactBuilder.notes(notesField.getValue());
+    public IndustryType getIndustry() {
+        return industryField.getValue();
+    }
+
+    public String getNotes() {
+        return notesField.getValue();
+    }
+
+    public Set<Phone> getPhones() {
         final ObservableList<Node> fields = ((VBox) phonesTitledPane.getContent()).getChildren();
-        for (Node field : fields) {
+        return fields.stream().map(field -> {
             final TypeFormField<PhoneType> formField = (TypeFormField<PhoneType>) ((HBox) field).getChildren().get(0);
-            Phone phone = new Phone(formField.getType(), formField.getValue());
-            contactBuilder.addPhone(phone);
-        }
+            return new Phone(formField.getType(), formField.getValue());
+        }).collect(Collectors.toSet());
+    }
 
-        final ObservableList<Node> emailFields = ((VBox) emailsTitledPane.getContent()).getChildren();
-        for (Node field : emailFields) {
+    public Set<Email> getEmails() {
+        final ObservableList<Node> fields = ((VBox) emailsTitledPane.getContent()).getChildren();
+        return fields.stream().map(field -> {
             final TypeFormField<EmailType> formField = (TypeFormField<EmailType>) ((HBox) field).getChildren().get(0);
-            Email email = new Email(formField.getType(), formField.getValue());
-            contactBuilder.addEmail(email);
-        }
+            return new Email(formField.getType(), formField.getValue());
+        }).collect(Collectors.toSet());
+    }
 
-        final ObservableList<Node> socialMediaFields = ((VBox) socialMediaTitledPane.getContent()).getChildren();
-        for (Node field : socialMediaFields) {
+    public Set<SocialMedia> getSocialMedias() {
+        final ObservableList<Node> fields = ((VBox) socialMediaTitledPane.getContent()).getChildren();
+        return fields.stream().map(field -> {
             final TypeFormField<SocialPlatform> formField = (TypeFormField<SocialPlatform>) ((HBox) field).getChildren().get(0);
-            SocialMedia media = new SocialMedia(formField.getValue(), formField.getType());
-            contactBuilder.addSocialMedia(media);
-        }
+            return new SocialMedia(formField.getValue(), formField.getType());
+        }).collect(Collectors.toSet());
+    }
 
-        final ObservableList<Node> datesFields = ((VBox) datesTitledPane.getContent()).getChildren();
-        for (Node field : datesFields) {
+    public Set<ImportantDate> getImportantDates() {
+        final ObservableList<Node> fields = ((VBox) datesTitledPane.getContent()).getChildren();
+        return fields.stream().map(field -> {
             final DateFormField formField = (DateFormField) ((HBox) field).getChildren().get(0);
-            contactBuilder.addDate(formField.getValue());
-        }
+            return formField.getValue();
+        }).collect(Collectors.toSet());
+    }
 
-        final ObservableList<Node> addressFields = ((VBox) addressesTitledPane.getContent()).getChildren();
-        for (Node field : addressFields) {
+    public Set<Address> getAddresses() {
+        final ObservableList<Node> fields = ((VBox) addressesTitledPane.getContent()).getChildren();
+        return fields.stream().map(field -> {
             final AddressFormField formField = (AddressFormField) ((HBox) field).getChildren().get(0);
-            final Address address = formField.getValue();
-            if (address != null) contactBuilder.addAddress(address);
-        }
-        contact = contactBuilder.build();
-        LOGGER.info("Contacto creado");
-        return true;
+            return formField.getValue();
+        }).filter(address -> address != null).collect(Collectors.toSet());
     }
 }
