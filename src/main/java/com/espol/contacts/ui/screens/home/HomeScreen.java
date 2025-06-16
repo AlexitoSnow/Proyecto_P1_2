@@ -1,25 +1,31 @@
 package com.espol.contacts.ui.screens.home;
 
 import com.espol.contacts.config.constants.Constants;
-import com.espol.contacts.config.router.*;
+import com.espol.contacts.config.router.AppRouter;
+import com.espol.contacts.config.router.Routes;
 import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
 import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
-import com.espol.contacts.domain.entity.*;
+import com.espol.contacts.domain.entity.Company;
+import com.espol.contacts.domain.entity.Contact;
+import com.espol.contacts.domain.entity.Person;
 import com.espol.contacts.domain.entity.enums.ContactType;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
+import com.espol.contacts.ui.fragments.ExtraInfoView;
 import com.espol.contacts.ui.screens.home.fragments.ContactCell;
 import com.espol.contacts.ui.screens.home.fragments.ContactView;
-import com.espol.contacts.ui.fragments.ExtraInfoView;
 import com.espol.contacts.ui.screens.home.fragments.EmptyLabel;
 import com.espol.contacts.ui.screens.home.fragments.SearchField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -56,6 +62,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
     private Comparator<Contact> currentSortComparator;
     private Integer selectedIndex;
     private ContactCell selectedCell;
+    private Contact selectedContact = null;
 
     public HomeScreen() {
         this.repository = ContactsRepositoryImpl.getInstance();
@@ -87,9 +94,9 @@ public class HomeScreen implements Initializable, Observer<Contact> {
 
         showButton.getItems().addAll("Todos", "Favoritos", "Personas", "Empresas");
         showButton.setValue("Todos");
-        showButton.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            onApplyFilter(newValue);
-        });
+        showButton.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) ->
+                        onApplyFilter(newValue));
 
         Constants.COMPARATORS.forEach(
                 (name, comparator) -> {
@@ -142,9 +149,22 @@ public class HomeScreen implements Initializable, Observer<Contact> {
                 } else {
                     mainPane.setCenter(new EmptyLabel());
                     mainPane.setRight(null);
+                    navigationRow.setVisible(false);
+                    navigationRow.setManaged(false);
                 }
             }
             updateCount();
+
+            if (selectedContact != null && !contactsListView.getChildren().isEmpty()) {
+                for (int i = 0; i < contactsListView.getChildren().size(); i++) {
+                    ContactCell cell = (ContactCell) contactsListView.getChildren().get(i);
+                    if (cell.getContact().equals(selectedContact)) {
+                        onContactSelected(cell);
+                        selectedContact = null;
+                        break;
+                    }
+                }
+            }
         });
     }
 
@@ -238,5 +258,9 @@ public class HomeScreen implements Initializable, Observer<Contact> {
             allContactsData = repository.getAll();
             displayContacts(contact == null);
         });
+    }
+
+    public void setSelectedContact(Contact contact) {
+        this.selectedContact = contact;
     }
 }
