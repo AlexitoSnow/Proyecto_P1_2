@@ -6,11 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.util.Callback;
 import org.kordamp.ikonli.Ikon;
-
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class SimpleFormField extends BaseFormField<String> {
 

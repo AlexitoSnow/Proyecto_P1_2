@@ -19,5 +19,12 @@ public class Icons {
      */
     public static final String REGULAR_STAR = "far-star";
 
-    public static final String SOLID_STAR = "fas-star";
+    public static final String S_EDIT = "fas-edit";
+    public static final String S_USER_CIRCLE = "fas-user-circle";
+    public static final String S_STAR = "fas-star";
+    public static final String S_REMOVE = "fas-minus";
+    public static final String S_CHECK_CIRCLE = "fas-check-circle";
+    public static final String S_COMPANY = "fas-building";
+    public static final String S_USER = "fas-user";
+    public static final String S_EXCLAMATION_TRIANGLE = "fas-exclamation-triangle";
 }

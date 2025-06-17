@@ -46,4 +46,9 @@ public class Person extends Contact {
     public String getLastName() {
         return lastName;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " " + lastName;
+    }
 }

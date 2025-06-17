@@ -5,9 +5,14 @@ public enum DateType {
     ANNIVERSARY("ANIVERSARIO"),
     OTHER("OTRO");
 
-    private final String value;
+    private final String name;
 
-    DateType(String value) {
-        this.value = value;
+    DateType(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

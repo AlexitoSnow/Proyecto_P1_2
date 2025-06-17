@@ -1,25 +1,31 @@
 package com.espol.contacts.ui.fragments;
 
+import com.espol.contacts.config.constants.Icons;
+import com.espol.contacts.config.router.AppRouter;
+import com.espol.contacts.config.router.Routes;
+import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.RelatedContact;
+import com.espol.contacts.domain.entity.enums.ContactType;
 import com.espol.contacts.domain.entity.enums.Relationship;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class RelatedContactBox extends HBox {
     private final ChoiceBox<Relationship> choiceBox;
-    private final TextField phoneField;
+    private final Button contactSelectorButton;
     private Button removeButton;
     private final boolean isEditable;
     private RelatedContact value;
 
-    public RelatedContactBox(boolean isEditable) {
+    public RelatedContactBox(boolean isEditable, Contact main) {
         super(4.0); // spacing
         this.isEditable = isEditable;
+        this.value = new RelatedContact(null, null);
 
         this.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         this.setMaxWidth(Double.MAX_VALUE);
@@ -29,25 +35,38 @@ public class RelatedContactBox extends HBox {
         choiceBox.setValue(Relationship.FRIEND);
         choiceBox.setDisable(!isEditable);
 
-        phoneField = new TextField();
-        phoneField.setPromptText("Número de teléfono");
-        phoneField.setEditable(isEditable);
-        HBox.setHgrow(phoneField, javafx.scene.layout.Priority.ALWAYS);
+        contactSelectorButton = new Button("Seleccionar contacto");
+        contactSelectorButton.setMaxWidth(Double.MAX_VALUE);
+        contactSelectorButton.setAlignment(Pos.CENTER_LEFT);
 
-        this.getChildren().addAll(choiceBox, phoneField);
+        HBox.setHgrow(contactSelectorButton, javafx.scene.layout.Priority.ALWAYS);
+
+        this.getChildren().addAll(choiceBox, contactSelectorButton);
 
         if (isEditable) {
-            removeButton = new Button(null, new FontIcon("fas-minus"));
-
-            phoneField.textProperty().addListener((observable, oldValue, newValue) -> {
-                value.setPhoneNumber(newValue);
+            contactSelectorButton.setOnAction(event -> {
+                ContactSelectorDialog dialog = new ContactSelectorDialog(main);
+                Contact result = dialog.showAndWait().orElse(null);
+                if (result != null) {
+                    contactSelectorButton.setText(result.toString());
+                    contactSelectorButton.setGraphic(new FontIcon(
+                            result.getContactType() == ContactType.Persona ? Icons.S_USER : Icons.S_COMPANY
+                    ));
+                    value.setContact(result);
+                } else if (value.getContact() == null) {
+                    contactSelectorButton.setText("Seleccionar contacto");
+                }
             });
+
+            removeButton = new Button(null, new FontIcon(Icons.S_REMOVE));
 
             choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 value.setRelationship(newValue);
             });
 
             this.getChildren().add(removeButton);
+        } else {
+            contactSelectorButton.setOnAction(event -> AppRouter.setRoot(Routes.HOME, value.getContact()));
         }
     }
 
@@ -57,19 +76,18 @@ public class RelatedContactBox extends HBox {
     }
 
     public void setValue(RelatedContact relatedContact) {
-        this.value = relatedContact;
         if (relatedContact != null) {
+            this.value = relatedContact;
             choiceBox.setValue(relatedContact.getRelationship());
-            phoneField.setText(relatedContact.getPhoneNumber());
+            contactSelectorButton.setText(relatedContact.getContact().toString());
         }
     }
 
     public RelatedContact getValue() {
-        if (value == null) {
+        value.setRelationship(choiceBox.getValue());
+        if (value.getContact() == null || value.getRelationship() == null) {
             return null;
         }
-        value.setRelationship(choiceBox.getValue());
-        value.setPhoneNumber(phoneField.getText());
         return value;
     }
 }

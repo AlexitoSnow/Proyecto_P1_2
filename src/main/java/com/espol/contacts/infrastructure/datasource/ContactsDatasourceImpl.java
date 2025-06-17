@@ -3,6 +3,7 @@ package com.espol.contacts.infrastructure.datasource;
 import com.espol.contacts.config.SessionManager;
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.utils.Serialization;
+import com.espol.contacts.config.utils.list.ArrayList;
 import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
 import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
@@ -10,9 +11,13 @@ import com.espol.contacts.domain.datasource.ContactsDatasource;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Phone;
 import com.espol.contacts.domain.entity.User;
-import com.espol.contacts.infrastructure.exception.DuplicatedContactException;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -58,6 +63,18 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
         return contacts;
     }
 
+    @Override
+    public List<Contact> getAllByName(String name) {
+        ArrayList<Contact> filteredContacts = new ArrayList<>();
+        for (Contact contact : contacts) {
+            if (contact.getName().toLowerCase().contains(name.toLowerCase())) {
+                filteredContacts.addLast(contact);
+            }
+        }
+        return filteredContacts;
+    }
+
+    @Override
     public Optional<Contact> getByPhone(Phone phone) {
         for (Contact contact : contacts) {
             if (contact.getPhones().contains(phone)) {
@@ -68,13 +85,17 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
     }
 
     @Override
-    public Contact save(Contact contact) {
-        for (Phone phone : contact.getPhones()) {
-            if (this.getByPhone(phone).isPresent()) {
-                LOGGER.warning("El número de teléfono ya existe en otro contacto.");
-                throw new DuplicatedContactException(phone.getNumber());
+    public Optional<Contact> getById(Long id) {
+        for (Contact contact : contacts) {
+            if (contact.getId().equals(id)) {
+                return Optional.of(contact);
             }
         }
+        return Optional.empty();
+    }
+
+    @Override
+    public Contact save(Contact contact) {
         for (int i = 0; i < contacts.size(); i++) {
             Contact c = contacts.get(i);
             if (c.equals(contact)) {
@@ -94,7 +115,26 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
     @Override
     public void delete(Contact contact) {
         contacts.remove(contact);
-        Serialization.serializeFile(contacts,fileName);
+        Path galleryPath = Paths.get(Constants.GALLERY_FOLDER, SessionManager.getInstance().getCurrentUser().getUsername(), contact.getName());
+        try {
+            deleteDirectoryRecursively(galleryPath);
+            galleryPath.toFile().deleteOnExit();
+        } catch (IOException e) {
+            LOGGER.warning("Error al eliminar la galería del contacto: " + contact.getName());
+            e.printStackTrace();
+        }
+        LOGGER.info("Eliminando contacto y su galería ID: " + contact.getId());
+        Serialization.serializeFile(contacts, fileName);
+    }
+
+    private static void deleteDirectoryRecursively(Path path) throws IOException {
+        if (Files.exists(path)) {
+            Files.walk(path)
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(p -> {
+                        p.toFile().deleteOnExit();
+                    });
+        }
     }
 
     @Override

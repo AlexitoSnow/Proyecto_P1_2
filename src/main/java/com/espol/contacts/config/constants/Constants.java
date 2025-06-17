@@ -16,6 +16,8 @@ public class Constants {
 
     public static final String ACCOUNTS_FOLDER = "app" + File.separator + "accounts";
 
+    public static final String GALLERY_FOLDER = "app" + File.separator + "gallery";
+
     public static final Map<String, Comparator<Contact>> COMPARATORS = Map.of(
             "Nombre", new NameComparator(),
             "Apellido", new LastNameComparator(),

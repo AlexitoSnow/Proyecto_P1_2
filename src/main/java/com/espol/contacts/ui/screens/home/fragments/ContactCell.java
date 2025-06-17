@@ -3,16 +3,18 @@ package com.espol.contacts.ui.screens.home.fragments;
 import com.espol.contacts.config.router.AppRouter;
 import com.espol.contacts.config.router.Routes;
 import com.espol.contacts.domain.entity.Contact;
-import com.espol.contacts.domain.entity.Person;
 import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
+import com.espol.contacts.ui.fragments.ProfilePicture;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
@@ -28,15 +30,12 @@ public class ContactCell extends HBox implements Initializable {
     @FXML
     private MenuItem favoriteMenuItem;
     @FXML
-    private FontIcon profileIcon;
-    @FXML
-    private ImageView profileImage;
-    @FXML
     private MenuButton trailing;
     @FXML
     private Label nameLabel;
     @FXML
     private Tooltip nameTooltip;
+    private ProfilePicture profilePicture;
 
     private ContactsRepository repository;
     private Contact contact;
@@ -58,24 +57,16 @@ public class ContactCell extends HBox implements Initializable {
         }
     }
 
-    // TODO: Fix the displayName logic, the lastName should not be appended if it is null
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.setPadding(new Insets(8));
         HBox.setHgrow(this, Priority.ALWAYS);
 
-        String displayName = this.contact.getName();
-        if (this.contact instanceof Person) {
-            final Person person = (Person) this.contact;
-            displayName = displayName + " " + person.getLastName();
-        }
-        nameLabel.setText(displayName);
-        nameTooltip.setText(displayName);
+        nameLabel.setText(contact.toString());
+        nameTooltip.setText(contact.toString());
 
-        if (contact.getProfilePicture() != null) {
-            // TODO: Add the profile picture to profileImage ImageView
-            this.getChildren().set(0, profileImage);
-        }
+        profilePicture = new ProfilePicture(contact.getProfilePicture(), 60);
+        this.getChildren().add(0, profilePicture);
 
         favoriteMenuItem.setText(contact.isFavorite() ? "Remover de favoritos": "Agregar a favoritos");
         favoriteMenuItem.setGraphic(new FontIcon(contact.isFavorite() ? FontAwesomeRegular.STAR : FontAwesomeSolid.STAR));

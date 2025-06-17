@@ -2,7 +2,6 @@ package com.espol.contacts.domain.entity;
 
 import com.espol.contacts.domain.entity.enums.IndustryType;
 
-// TODO: Implement industry in UI (Forms and Views) using a TypeFormField
 public class Company extends Contact {
     private final IndustryType industry;
 
