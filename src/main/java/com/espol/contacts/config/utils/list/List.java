@@ -2,6 +2,7 @@ package com.espol.contacts.config.utils.list;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.ListIterator;
 
 
 public interface List<E> extends Iterable<E>, Serializable {
@@ -38,6 +39,8 @@ public interface List<E> extends Iterable<E>, Serializable {
 
     int indexOf(E element);
 
+    ListIterator<E> listIterator();
+
     default void sort(Comparator<E> comparator) {
         int n = this.size();
         for (int i = 0; i < n - 1; i++) {
@@ -51,5 +54,4 @@ public interface List<E> extends Iterable<E>, Serializable {
             }
         }
     }
-
 }

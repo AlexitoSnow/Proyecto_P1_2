@@ -1,6 +1,7 @@
 package com.espol.contacts.config.utils.list;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 public class CircularDoublyLinkedList<E> implements List<E> {
@@ -231,6 +232,14 @@ public class CircularDoublyLinkedList<E> implements List<E> {
         return -1;
     }
 
+    public ListIterator<E> listIterator() {
+        return new CircularListIterator(0);
+    }
+
+    public ListIterator<E> listIterator(int index) {
+        return new CircularListIterator(index);
+    }
+
     @Override
     public String toString() {
         if (isEmpty()) return "[]";
@@ -245,6 +254,73 @@ public class CircularDoublyLinkedList<E> implements List<E> {
         sb.append("]");
         return sb.toString();
     }
+
+    private class CircularListIterator implements ListIterator<E> {
+        private Node<E> current = head;
+        private int nextIndex = 0;
+
+        public CircularListIterator(int index) {
+            if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
+            for (int i = 0; i < index; i++) {
+                current = current.getNext();
+            }
+            nextIndex = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return size != 0;
+        }
+
+        @Override
+        public E next() {
+            if (size == 0) throw new NoSuchElementException();
+            E value = current.getElement();
+            current = current.getNext();
+            nextIndex = (nextIndex + 1) % size;
+            return value;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return size != 0;
+        }
+
+        @Override
+        public E previous() {
+            if (size == 0) throw new NoSuchElementException();
+            current = current.getPrevious();
+            nextIndex = (nextIndex - 1 + size) % size;
+            return current.getElement();
+        }
+
+        @Override
+        public int nextIndex() {
+            return nextIndex;
+        }
+
+        @Override
+        public int previousIndex() {
+            return (nextIndex - 1 + size) % size;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void set(E e) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void add(E e) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private static final long serialVersionUID = 927364827648273648L;
 }
 
 

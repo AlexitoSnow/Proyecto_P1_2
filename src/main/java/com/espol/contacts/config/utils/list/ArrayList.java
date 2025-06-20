@@ -1,6 +1,7 @@
 package com.espol.contacts.config.utils.list;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 
@@ -133,6 +134,53 @@ public class ArrayList<E> implements List<E> {
     }
 
     @Override
+    public ListIterator<E> listIterator() {
+        return new ListIterator<E>() {
+            private int index = 0;
+
+            public boolean hasNext() {
+                return index < size;
+            }
+
+            public E next() {
+                if (!hasNext()) throw new NoSuchElementException();
+                return data[index++];
+            }
+
+            public boolean hasPrevious() {
+                return index > 0;
+            }
+
+            public E previous() {
+                if (!hasPrevious()) throw new NoSuchElementException();
+                return data[--index];
+            }
+
+            public int nextIndex() {
+                return index;
+            }
+
+            public int previousIndex() {
+                return index - 1;
+            }
+
+            public void remove() {
+                if (index == 0) throw new IllegalStateException();
+                ArrayList.this.remove(--index);
+            }
+
+            public void set(E e) {
+                if (index == 0) throw new IllegalStateException();
+                ArrayList.this.set(index - 1, e);
+            }
+
+            public void add(E e) {
+                ArrayList.this.add(index++, e);
+            }
+        };
+    }
+
+    @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
             private int index = 0;
@@ -156,6 +204,8 @@ public class ArrayList<E> implements List<E> {
         sb.append("]");
         return sb.toString();
     }
+
+    private static final long serialVersionUID = 3847261938472619384L;
 }
 
 
