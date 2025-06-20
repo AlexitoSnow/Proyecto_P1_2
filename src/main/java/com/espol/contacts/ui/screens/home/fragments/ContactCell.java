@@ -23,6 +23,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -81,7 +82,7 @@ public class ContactCell extends HBox implements Initializable {
     @FXML
     void onEdit(ActionEvent event) {
         LOGGER.info("onEditContact selected: " + this.contact.getId());
-        AppRouter.setRoot(Routes.FORM, this.contact);
+        AppRouter.setRoot(Routes.FORM, Map.of("contact", this.contact));
     }
 
     @FXML

@@ -7,6 +7,7 @@ import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.RelatedContact;
 import com.espol.contacts.domain.entity.enums.ContactType;
 import com.espol.contacts.domain.entity.enums.Relationship;
+import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -15,16 +16,16 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.Map;
+
 public class RelatedContactBox extends HBox {
     private final ChoiceBox<Relationship> choiceBox;
     private final Button contactSelectorButton;
     private Button removeButton;
-    private final boolean isEditable;
     private RelatedContact value;
 
     public RelatedContactBox(boolean isEditable, Contact main) {
         super(4.0); // spacing
-        this.isEditable = isEditable;
         this.value = new RelatedContact(null, null);
 
         this.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -66,7 +67,10 @@ public class RelatedContactBox extends HBox {
 
             this.getChildren().add(removeButton);
         } else {
-            contactSelectorButton.setOnAction(event -> AppRouter.setRoot(Routes.HOME, value.getContact()));
+            contactSelectorButton.setOnAction(event -> {
+                final int index = ContactsRepositoryImpl.getInstance().getAll().indexOf(value.getContact());
+                AppRouter.setRoot(Routes.HOME, Map.of("index", index));
+            });
         }
     }
 

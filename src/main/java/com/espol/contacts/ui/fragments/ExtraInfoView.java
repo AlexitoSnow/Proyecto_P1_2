@@ -155,7 +155,7 @@ public class ExtraInfoView extends ScrollPane {
 
     @FXML
     void goToEdit(ActionEvent event) {
-        AppRouter.setRoot(Routes.FORM, contact);
+        AppRouter.setRoot(Routes.FORM, Map.of("contact", contact));
     }
 
     @FXML
@@ -163,12 +163,12 @@ public class ExtraInfoView extends ScrollPane {
         repository.delete(contact);
     }
 
-    public Set<String> getGalleryImages(String contactName) {
+    public Set<String> getGalleryImages(String contactId) {
         String path = Constants.GALLERY_FOLDER +
                 File.separator +
                 SessionManager.getInstance().getCurrentUser().getUsername() +
                 File.separator +
-                contactName +
+                contactId +
                 File.separator;
 
         Set<String> images = imageGallery.getChildren().stream().map(node -> {
@@ -214,12 +214,12 @@ public class ExtraInfoView extends ScrollPane {
         }
     }
 
-    public String getProfilePicture(String contactName) {
+    public String getProfilePicture(String contactId) {
         String path = Constants.GALLERY_FOLDER +
                 File.separator +
                 SessionManager.getInstance().getCurrentUser().getUsername() +
                 File.separator +
-                contactName +
+                contactId +
                 File.separator + "profile" + File.separator;
         String profilePath = profilePicture.getImage();
         if (profilePath != null) {

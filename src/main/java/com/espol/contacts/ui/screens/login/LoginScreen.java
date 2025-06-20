@@ -7,24 +7,24 @@ import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.domain.repository.UsersRepository;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.attributeField.SimpleFormField;
+import com.espol.contacts.ui.screens.Initializer;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.net.URL;
+import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.function.Function;
 
 import static org.kordamp.ikonli.fontawesome6.FontAwesomeRegular.USER;
 import static org.kordamp.ikonli.fontawesome6.FontAwesomeSolid.EXCLAMATION_TRIANGLE;
 import static org.kordamp.ikonli.material2.Material2AL.LOCK;
 
-public class LoginScreen implements Initializable {
+public class LoginScreen implements Initializer {
 
     @FXML
     private VBox container;
@@ -37,7 +37,7 @@ public class LoginScreen implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(Map<String, Object> params) {
         Function<String, String> commonValidator = text -> text == null || text.isEmpty() ? "Campo requerido" : null;
 
         userField = new SimpleFormField("Nombre de usuario", USER);
@@ -49,8 +49,10 @@ public class LoginScreen implements Initializable {
         userField.setOnAction(this::login);
         passwordField.setOnAction(this::login);
 
-        container.getChildren().add(2, userField);
-        container.getChildren().add(3, passwordField);
+        Platform.runLater(() -> {
+            container.getChildren().add(2, userField);
+            container.getChildren().add(3, passwordField);
+        });
     }
 
     @FXML

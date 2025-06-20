@@ -2,13 +2,9 @@ package com.espol.contacts.config.router;
 
 import com.espol.contacts.App;
 import com.espol.contacts.config.constants.Constants;
-import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
-import com.espol.contacts.domain.entity.Contact;
-import com.espol.contacts.domain.entity.enums.ContactType;
-import com.espol.contacts.ui.screens.explorer.ImageExplorerScreen;
-import com.espol.contacts.ui.screens.form.FormScreen;
-import com.espol.contacts.ui.screens.home.HomeScreen;
+import com.espol.contacts.ui.screens.Initializer;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -31,12 +27,9 @@ public class AppRouter {
      * Declare the basic screen configuration that will be applied to the stage
      * @param stage to show the scenes
      */
-    public static void initStage(Stage stage) {
-        try {
-            scene = new Scene(loadFXML(Routes.LOGIN).load(), WIDTH, HEIGHT);
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to load main view fxml\nMessage: {0}", e.getMessage());
-        }
+    public static void initStage(Stage stage) throws IOException {
+        scene = new Scene(loadFXML(Routes.LOGIN).load(), WIDTH, HEIGHT);
+        setRoot(Routes.LOGIN);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.setTitle(Constants.APP_NAME);
@@ -48,12 +41,7 @@ public class AppRouter {
      * @param route to navigate
      */
     public static void setRoot(String route) {
-        try {
-            scene.setRoot(loadFXML(route).load());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to load FXML", e.getMessage());
-            e.printStackTrace();
-        }
+        setRoot(route, null);
     }
 
     /**
@@ -61,27 +49,13 @@ public class AppRouter {
      * @param route to navigate
      * @param data to send it to the route
      */
-    public static <T> void setRoot(String route, T data) {
+    public static void setRoot(String route, Map<String, Object> data) {
         try {
             FXMLLoader loader = loadFXML(route);
-            loader.setControllerFactory(type -> {
-                try {
-                    Object controllerInstance = type.getDeclaredConstructor().newInstance();
-                    if (route.equals(Routes.FORM)) {
-                        if (data instanceof ContactType) ((FormScreen) controllerInstance).setContactType((ContactType) data);
-                        if (data instanceof Contact) ((FormScreen) controllerInstance).setContact((Contact) data);
-                    }
-                    if (route.equals(Routes.HOME) && data instanceof Contact) {
-                        ((HomeScreen) controllerInstance).setSelectedContact((Contact) data);
-                    }
-                    return controllerInstance;
-                } catch (Exception e) {
-                    log.log(Level.SEVERE, "Error al crear la instancia del controlador para " + type.getName(), e);
-                    throw new RuntimeException("No se pudo crear la instancia del controlador.", e);
-                }
-            });
-
-            scene.setRoot(loader.load());
+            Parent root = loader.load();
+            Initializer controller = loader.getController();
+            controller.initialize(data);
+            scene.setRoot(root);
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Error al cargar FXML o establecer la raíz para " + route, e);
@@ -91,27 +65,25 @@ public class AppRouter {
 
     public static void openNewWindow(String route, String title, Map<String, Object> data) {
         try {
-            FXMLLoader loader = loadFXML(route);
+            Stage primaryStage = (Stage) scene.getWindow();
 
-            loader.setControllerFactory(type -> {
-                try {
-                    Object controllerInstance = type.getDeclaredConstructor().newInstance();
-                    if (route.equals(Routes.EXPLORER)) {
-                        ((ImageExplorerScreen) controllerInstance).setList((CircularDoublyLinkedList<String>) data.get("list"));
-                        ((ImageExplorerScreen) controllerInstance).setCurrentIndex(Integer.parseInt(data.get("index").toString()));
-                    }
-                    return controllerInstance;
-                } catch (Exception e) {
-                    log.log(Level.SEVERE, "Error al crear la instancia del controlador para " + type.getName(), e);
-                    throw new RuntimeException("No se pudo crear la instancia del controlador.", e);
-                }
-            });
+            FXMLLoader loader = loadFXML(route);
+            Parent root = loader.load();
+
+            Initializer controller = loader.getController();
+            controller.initialize(data);
 
             Stage newStage = new Stage();
-            newStage.setScene(new Scene(loader.load(), WIDTH, HEIGHT));
+            newStage.setScene(new Scene(root, WIDTH, HEIGHT));
             newStage.setMaximized(true);
             newStage.setTitle(title);
             newStage.show();
+
+            primaryStage.close();
+
+            newStage.setOnCloseRequest(e -> {
+                primaryStage.show();
+            });
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed to open new window with FXML: {0}\nMessage: {1}", new Object[]{route, e.getMessage()});

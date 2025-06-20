@@ -7,23 +7,22 @@ import com.espol.contacts.domain.entity.User;
 import com.espol.contacts.domain.repository.UsersRepository;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.attributeField.SimpleFormField;
+import com.espol.contacts.ui.screens.Initializer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Notifications;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.Map;
 
 import static org.kordamp.ikonli.fontawesome6.FontAwesomeRegular.USER;
 import static org.kordamp.ikonli.fontawesome6.FontAwesomeSolid.EXCLAMATION_TRIANGLE;
 import static org.kordamp.ikonli.material2.Material2OutlinedAL.EMAIL;
 import static org.kordamp.ikonli.material2.Material2OutlinedAL.LOCK;
 
-public class RegisterScreen implements Initializable {
+public class RegisterScreen implements Initializer {
 
     @FXML
     private VBox container;
@@ -38,7 +37,7 @@ public class RegisterScreen implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(Map<String, Object> params) {
         username = new SimpleFormField("Nombre de usuario", USER);
         email = new SimpleFormField("Correo electrónico", EMAIL);
         password = new SimpleFormField("Crea una contraseña segura", LOCK);
