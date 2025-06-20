@@ -10,7 +10,7 @@ public interface ContactsDatasource {
     List<Contact> getAll();
     List<Contact> getAllByName(String name);
     Optional<Contact> getByPhone(Phone phone);
-    Optional<Contact> getById(Long id);
+    Optional<Contact> getById(String id);
     Contact save(Contact entity);
     void delete(Contact entity);
 }

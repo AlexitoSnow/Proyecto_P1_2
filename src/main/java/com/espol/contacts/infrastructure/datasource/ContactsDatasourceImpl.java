@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User> {
@@ -85,7 +86,7 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
     }
 
     @Override
-    public Optional<Contact> getById(Long id) {
+    public Optional<Contact> getById(String id) {
         for (Contact contact : contacts) {
             if (contact.getId().equals(id)) {
                 return Optional.of(contact);
@@ -105,7 +106,7 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
                 return contact;
             }
         }
-        contact.setId(contacts.size() + 1L);
+        contact.setId(UUID.randomUUID().toString());
         contacts.addLast(contact);
         LOGGER.info("Guardando contacto ID: " + contact.getId());
         Serialization.serializeFile(contacts, fileName);
@@ -115,10 +116,9 @@ public class ContactsDatasourceImpl implements ContactsDatasource, Observer<User
     @Override
     public void delete(Contact contact) {
         contacts.remove(contact);
-        Path galleryPath = Paths.get(Constants.GALLERY_FOLDER, SessionManager.getInstance().getCurrentUser().getUsername(), contact.getName());
+        Path galleryPath = Paths.get(Constants.GALLERY_FOLDER, SessionManager.getInstance().getCurrentUser().getUsername(), contact.getId());
         try {
             deleteDirectoryRecursively(galleryPath);
-            galleryPath.toFile().deleteOnExit();
         } catch (IOException e) {
             LOGGER.warning("Error al eliminar la galería del contacto: " + contact.getName());
             e.printStackTrace();
