@@ -33,4 +33,6 @@ public class Email implements Serializable {
     public int hashCode() {
         return Objects.hashCode(email);
     }
+
+    private static final long serialVersionUID = 4728364728364728364L;
 }

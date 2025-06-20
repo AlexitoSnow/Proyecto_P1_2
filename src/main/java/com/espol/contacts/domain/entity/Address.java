@@ -130,4 +130,6 @@ public class Address implements Serializable {
 
         return sb.toString();
     }
+
+    private static final long serialVersionUID = 927348273648273648L;
 }

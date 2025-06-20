@@ -36,4 +36,6 @@ public class Company extends Contact {
     public IndustryType getIndustry() {
         return industry;
     }
+
+    private static final long serialVersionUID = 6182736451827364518L;
 }

@@ -33,4 +33,6 @@ public class Phone implements Serializable {
     public int hashCode() {
         return Objects.hashCode(number);
     }
+
+    private static final long serialVersionUID = 1948572039485720394L;
 }

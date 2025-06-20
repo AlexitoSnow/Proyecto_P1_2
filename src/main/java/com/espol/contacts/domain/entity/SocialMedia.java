@@ -33,4 +33,6 @@ public class SocialMedia implements Serializable {
     public int hashCode() {
         return Objects.hash(username, platform);
     }
+
+    private static final long serialVersionUID = 3847502938475029384L;
 }

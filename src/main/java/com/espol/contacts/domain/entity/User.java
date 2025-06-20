@@ -41,4 +41,6 @@ public class User implements Serializable {
     public int hashCode() {
         return Objects.hash(username, password);
     }
+
+    private static final long serialVersionUID = 6758493029485738493L;
 }

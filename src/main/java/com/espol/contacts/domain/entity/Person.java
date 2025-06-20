@@ -49,6 +49,8 @@ public class Person extends Contact {
 
     @Override
     public String toString() {
-        return super.toString() + " " + lastName;
+        return super.toString() + (lastName != null ? " " + lastName : "");
     }
+
+    private static final long serialVersionUID = 5728391029384756102L;
 }

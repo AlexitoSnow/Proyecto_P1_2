@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Contact implements Serializable {
-    protected Long id;
+    protected String id;
     protected final Set<Email> emails;
     protected final Set<Phone> phones;
     protected final Set<Address> addresses;
@@ -39,7 +39,7 @@ public class Contact implements Serializable {
     }
 
     public static abstract class ContactBuilder<T extends ContactBuilder<T>> {
-        protected Long id;
+        protected String id;
         protected Set<Email> emails = new HashSet<>();
         protected Set<Phone> phones = new HashSet<>();
         protected Set<Address> addresses = new HashSet<>();
@@ -53,7 +53,7 @@ public class Contact implements Serializable {
         protected Boolean favorite = false;
         protected String profilePicture;
 
-        public T id(Long id) {
+        public T id(String id) {
             this.id = id;
             return self();
         }
@@ -162,7 +162,7 @@ public class Contact implements Serializable {
         return name;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -174,7 +174,7 @@ public class Contact implements Serializable {
         return relatedContacts;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

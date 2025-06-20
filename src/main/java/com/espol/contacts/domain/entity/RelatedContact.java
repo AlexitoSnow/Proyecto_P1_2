@@ -28,4 +28,6 @@ public class RelatedContact implements Serializable {
     public void setContact(Contact contact) {
         this.contact = contact;
     }
+
+    private static final long serialVersionUID = 8203948572039485720L;
 }

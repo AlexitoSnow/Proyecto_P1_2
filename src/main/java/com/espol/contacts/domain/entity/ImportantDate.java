@@ -50,4 +50,6 @@ public class ImportantDate implements Serializable {
     public String toString() {
         return date.format(new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter());
     }
+
+    private static final long serialVersionUID = 8392018392018392018L;
 }

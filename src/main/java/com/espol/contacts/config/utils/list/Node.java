@@ -36,4 +36,6 @@ public class Node<E> implements Serializable {
     public void setPrevious(Node<E> previous) {
         this.previous = previous;
     }
+
+    private static final long serialVersionUID = 973648L;
 }
