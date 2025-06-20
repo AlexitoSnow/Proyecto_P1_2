@@ -1,61 +1,63 @@
 package com.espol.contacts.ui.screens.explorer;
 
 import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
+import com.espol.contacts.ui.screens.Initializer;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.ListIterator;
+import java.util.Map;
 
-public class ImageExplorerScreen implements Initializable {
+public class ImageExplorerScreen implements Initializer {
     @FXML
     private Text infoTxt;
     @FXML
     private ImageView image;
 
     private CircularDoublyLinkedList<String> imagePaths;
-    private int currentIndex;
+    private ListIterator<String> iterator;
 
-    public void setList(CircularDoublyLinkedList<String> imagePaths) {
-        this.imagePaths = imagePaths;
-    }
+    public void initialize(Map<String, Object> params) {
+        this.imagePaths = (CircularDoublyLinkedList<String>) params.get("list");
+        Integer currentIndex = Integer.parseInt(params.get("index").toString());
 
-    public void setCurrentIndex(int currentIndex) {
-        this.currentIndex = currentIndex;
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (imagePaths != null && !imagePaths.isEmpty()) {
-            loadImage();
-        } else {
-            infoTxt.setText("No images available.");
+        if (imagePaths == null || imagePaths.isEmpty()) {
+            if (infoTxt != null) infoTxt.setText("No images available.");
+            if (image != null) image.setImage(null);
+            return;
         }
+        iterator = imagePaths.listIterator(currentIndex);
+        loadImage(iterator.next());
     }
 
-    private void loadImage() {
-        String imagePath = imagePaths.get(currentIndex);
-        image.setImage(new Image("file:///" + imagePath));
-        infoTxt.setText("Imagen " + (currentIndex + 1) + " de " + imagePaths.size());
+    private void loadImage(String imagePath) {
+        Platform.runLater(() -> {
+            if (imagePaths == null || imagePaths.isEmpty()) {
+                infoTxt.setText("No images available.");
+                image.setImage(null);
+                return;
+            }
+            int idx = iterator.previousIndex();
+            image.setImage(new Image("file:///" + imagePath));
+            infoTxt.setText("Imagen " + (idx + 1) + " de " + imagePaths.size());
+        });
     }
 
     @FXML
     void next(MouseEvent event) {
         if (imagePaths != null && !imagePaths.isEmpty()) {
-            currentIndex = (currentIndex + 1) % imagePaths.size();
-            loadImage();
+            loadImage(iterator.next());
         }
     }
 
     @FXML
     void previous(MouseEvent event) {
         if (imagePaths != null && !imagePaths.isEmpty()) {
-            currentIndex = (currentIndex - 1 + imagePaths.size()) % imagePaths.size();
-            loadImage();
+            loadImage(iterator.previous());
         }
     }
 }

@@ -3,7 +3,7 @@ package com.espol.contacts.ui.screens.home;
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.router.AppRouter;
 import com.espol.contacts.config.router.Routes;
-import com.espol.contacts.config.utils.list.CircularDoublyLinkedList;
+import com.espol.contacts.config.utils.FilterSorterList;
 import com.espol.contacts.config.utils.list.List;
 import com.espol.contacts.config.utils.observer.Observer;
 import com.espol.contacts.domain.entity.Company;
@@ -14,6 +14,7 @@ import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.ExtraInfoView;
+import com.espol.contacts.ui.screens.Initializer;
 import com.espol.contacts.ui.screens.home.fragments.ContactCell;
 import com.espol.contacts.ui.screens.home.fragments.ContactView;
 import com.espol.contacts.ui.screens.home.fragments.EmptyLabel;
@@ -21,7 +22,6 @@ import com.espol.contacts.ui.screens.home.fragments.SearchField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -30,13 +30,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.net.URL;
 import java.util.Comparator;
-import java.util.ResourceBundle;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-public class HomeScreen implements Initializable, Observer<Contact> {
+public class HomeScreen implements Initializer, Observer<Contact> {
     private static final Logger LOGGER = Logger.getLogger(HomeScreen.class.getName());
     @FXML
     public MenuButton createButton;
@@ -62,7 +62,7 @@ public class HomeScreen implements Initializable, Observer<Contact> {
     private Comparator<Contact> currentSortComparator;
     private Integer selectedIndex;
     private ContactCell selectedCell;
-    private Contact selectedContact = null;
+    private ListIterator<Contact> contactIterator;
 
     public HomeScreen() {
         this.repository = ContactsRepositoryImpl.getInstance();
@@ -70,11 +70,10 @@ public class HomeScreen implements Initializable, Observer<Contact> {
         repository.addObserver(this);
         currentFilterPredicate = c -> true;
         currentSearchPredicate = c -> true;
-        currentSortComparator = Constants.COMPARATORS.get("Nombre");
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(Map<String, Object> params) {
         navigationRow.setVisible(false);
         navigationRow.setManaged(false);
 
@@ -89,14 +88,12 @@ public class HomeScreen implements Initializable, Observer<Contact> {
 
         createButton.getItems().forEach(item -> item.setOnAction(e -> {
             repository.removeObserver(this);
-            AppRouter.setRoot(Routes.FORM, ContactType.valueOf(item.getText()));
+            AppRouter.setRoot(Routes.FORM, Map.of("type", ContactType.valueOf(item.getText())));
         }));
 
         showButton.getItems().addAll("Todos", "Favoritos", "Personas", "Empresas");
         showButton.setValue("Todos");
-        showButton.getSelectionModel().selectedItemProperty()
-                .addListener((observable, oldValue, newValue) ->
-                        onApplyFilter(newValue));
+        showButton.setOnAction(event -> onApplyFilter(showButton.getValue()));
 
         Constants.COMPARATORS.forEach(
                 (name, comparator) -> {
@@ -110,92 +107,51 @@ public class HomeScreen implements Initializable, Observer<Contact> {
                 }
         );
 
-        sortButton.setText("Ordenar por: Nombre");
+        sortButton.setText("Selecciona un criterio de ordenación");
 
+        if (params != null && params.get("index") != null) {
+            selectContactByIndex((Integer) params.get("index"));
+        }
     }
 
     private void displayContacts(boolean clearSelection) {
         Platform.runLater(() -> {
             contactsListView.getChildren().clear();
 
-            List<Contact> filtered = new CircularDoublyLinkedList<>();
-            for (Contact contact : allContactsData) {
-                if (currentFilterPredicate.test(contact) && currentSearchPredicate.test(contact)) {
-                    filtered.addLast(contact);
-                }
-            }
+            List<Contact> filtered = FilterSorterList.filterAndSort(
+                    allContactsData,
+                    currentFilterPredicate,
+                    currentSearchPredicate,
+                    currentSortComparator
+            );
 
-            if (currentSortComparator != null) {
-                filtered.sort(currentSortComparator);
-            }
+            if (!filtered.isEmpty()) contactIterator = filtered.listIterator();
 
-            if (!filtered.isEmpty()) {
-                filtered.forEach(contact -> {
-                    ContactCell contactCell = new ContactCell(contact);
-                    contactCell.setOnMouseClicked(event -> onContactSelected(contactCell));
-                    contactsListView.getChildren().add(contactCell);
+            filtered.forEach(contact -> {
+                ContactCell contactCell = new ContactCell(contact);
+                contactCell.setOnMouseClicked(event -> {
+                    int i = contactsListView.getChildren().indexOf(contactCell);
+                    selectContactByIndex(i);
                 });
-            }
+                contactsListView.getChildren().add(contactCell);
+            });
 
-            if (clearSelection) {
-                selectedIndex = null;
-                selectedCell = null;
-                mainPane.setCenter(new EmptyLabel());
-                mainPane.setRight(null);
-            } else {
-                if (selectedIndex != null && selectedIndex < contactsListView.getChildren().size()) {
-                    ContactCell contactCell = (ContactCell) contactsListView.getChildren().get(selectedIndex);
-                    onContactSelected(contactCell);
-                } else {
-                    mainPane.setCenter(new EmptyLabel());
-                    mainPane.setRight(null);
-                    navigationRow.setVisible(false);
-                    navigationRow.setManaged(false);
-                }
+            if (clearSelection || contactsListView.getChildren().isEmpty()) {
+                clearSelection();
+            } else if (selectedIndex != null) {
+                selectContactByIndex(selectedIndex);
             }
             updateCount();
-
-            if (selectedContact != null && !contactsListView.getChildren().isEmpty()) {
-                for (int i = 0; i < contactsListView.getChildren().size(); i++) {
-                    ContactCell cell = (ContactCell) contactsListView.getChildren().get(i);
-                    if (cell.getContact().equals(selectedContact)) {
-                        onContactSelected(cell);
-                        selectedContact = null;
-                        break;
-                    }
-                }
-            }
         });
     }
 
-    private void onContactSelected(ContactCell contactCell) {
-        final Contact contact = contactCell.getContact();
-        if (selectedCell != null) selectedCell.setSelected(false);
-
-        selectedIndex = contactsListView.getChildren().indexOf(contactCell);
-        selectedCell = contactCell;
-        selectedCell.setSelected(true);
-
-        ContactView contactView;
-        ExtraInfoView rightPane = new ExtraInfoView(contact, false);
-        if (contact.getContactType() == ContactType.Persona) {
-            contactView = ContactView.builder().personBuilder((Person) contact).build();
-        } else {
-            contactView = ContactView.builder().companyBuilder((Company) contact).build();
-        }
-        ScrollPane centerPane = new ScrollPane();
-        centerPane.setFitToHeight(true);
-        centerPane.setFitToWidth(true);
-        centerPane.setContent(contactView);
-        Platform.runLater(() -> {
-            mainPane.setCenter(centerPane);
-            mainPane.setRight(rightPane);
-            navigationRow.setVisible(true);
-            navigationRow.setManaged(true);
-            final String text = String.format("Contacto %d de %d", selectedIndex + 1, contactsListView.getChildren().size());
-            countLabel.setText(text);
-        });
-        LOGGER.info("Selected Index: " + selectedIndex);
+    private void clearSelection() {
+        selectedIndex = null;
+        selectedCell = null;
+        mainPane.setCenter(new EmptyLabel());
+        mainPane.setRight(null);
+        navigationRow.setVisible(false);
+        navigationRow.setManaged(false);
     }
 
     void onApplyFilter(String text) {
@@ -218,14 +174,10 @@ public class HomeScreen implements Initializable, Observer<Contact> {
     @FXML
     void goNext(ActionEvent event) {
         Platform.runLater(() -> {
-            ((ContactCell) contactsListView.getChildren().get(selectedIndex)).setSelected(false);
-            if (selectedIndex == contactsListView.getChildren().size() - 1) {
-                selectedIndex = 0;
-                ContactCell contactCell = (ContactCell) contactsListView.getChildren().get(selectedIndex);
-                onContactSelected(contactCell);
-            } else {
-                ContactCell contactCell = (ContactCell) contactsListView.getChildren().get(++selectedIndex);
-                onContactSelected(contactCell);
+            if (contactIterator != null && contactIterator.hasNext()) {
+                contactIterator.next();
+                int idx = contactIterator.previousIndex();
+                selectContactByIndex(idx);
             }
         });
     }
@@ -233,14 +185,40 @@ public class HomeScreen implements Initializable, Observer<Contact> {
     @FXML
     void goPrevious(ActionEvent event) {
         Platform.runLater(() -> {
-            if (selectedIndex == 0) {
-                selectedIndex = contactsListView.getChildren().size() - 1;
-                ContactCell contactCell = (ContactCell) contactsListView.getChildren().get(selectedIndex);
-                onContactSelected(contactCell);
-            } else {
-                ContactCell contactCell = (ContactCell) contactsListView.getChildren().get(--selectedIndex);
-                onContactSelected(contactCell);
+            if (contactIterator != null && contactIterator.hasPrevious()) {
+                contactIterator.previous();
+                int idx = contactIterator.nextIndex();
+                selectContactByIndex(idx);
             }
+        });
+    }
+
+    private void selectContactByIndex(int idx) {
+        Platform.runLater(() -> {
+            if (selectedCell != null) selectedCell.setSelected(false);
+
+            selectedIndex = idx;
+            selectedCell = (ContactCell) contactsListView.getChildren().get(idx);
+            selectedCell.setSelected(true);
+
+            Contact contact = selectedCell.getContact();
+            ContactView contactView;
+            ExtraInfoView rightPane = new ExtraInfoView(contact, false);
+            if (contact.getContactType() == ContactType.Persona) {
+                contactView = ContactView.builder().personBuilder((Person) contact).build();
+            } else {
+                contactView = ContactView.builder().companyBuilder((Company) contact).build();
+            }
+            ScrollPane centerPane = new ScrollPane();
+            centerPane.setFitToHeight(true);
+            centerPane.setFitToWidth(true);
+            centerPane.setContent(contactView);
+            mainPane.setCenter(centerPane);
+            mainPane.setRight(rightPane);
+            navigationRow.setVisible(true);
+            navigationRow.setManaged(true);
+            final String text = String.format("Contacto %d de %d", selectedIndex + 1, contactsListView.getChildren().size());
+            countLabel.setText(text);
         });
     }
 
@@ -258,9 +236,5 @@ public class HomeScreen implements Initializable, Observer<Contact> {
             allContactsData = repository.getAll();
             displayContacts(contact == null);
         });
-    }
-
-    public void setSelectedContact(Contact contact) {
-        this.selectedContact = contact;
     }
 }
