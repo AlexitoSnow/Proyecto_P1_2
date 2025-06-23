@@ -41,6 +41,8 @@ public interface List<E> extends Iterable<E>, Serializable {
 
     ListIterator<E> listIterator();
 
+    ListIterator<E> listIterator(int index);
+
     default void sort(Comparator<E> comparator) {
         int n = this.size();
         for (int i = 0; i < n - 1; i++) {

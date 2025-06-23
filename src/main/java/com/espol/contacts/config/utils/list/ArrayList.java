@@ -135,49 +135,12 @@ public class ArrayList<E> implements List<E> {
 
     @Override
     public ListIterator<E> listIterator() {
-        return new ListIterator<E>() {
-            private int index = 0;
+        return new ArrayListIterator(0);
+    }
 
-            public boolean hasNext() {
-                return index < size;
-            }
-
-            public E next() {
-                if (!hasNext()) throw new NoSuchElementException();
-                return data[index++];
-            }
-
-            public boolean hasPrevious() {
-                return index > 0;
-            }
-
-            public E previous() {
-                if (!hasPrevious()) throw new NoSuchElementException();
-                return data[--index];
-            }
-
-            public int nextIndex() {
-                return index;
-            }
-
-            public int previousIndex() {
-                return index - 1;
-            }
-
-            public void remove() {
-                if (index == 0) throw new IllegalStateException();
-                ArrayList.this.remove(--index);
-            }
-
-            public void set(E e) {
-                if (index == 0) throw new IllegalStateException();
-                ArrayList.this.set(index - 1, e);
-            }
-
-            public void add(E e) {
-                ArrayList.this.add(index++, e);
-            }
-        };
+    @Override
+    public ListIterator<E> listIterator(int index) {
+        return new ArrayListIterator(index);
     }
 
     @Override
@@ -206,6 +169,57 @@ public class ArrayList<E> implements List<E> {
     }
 
     private static final long serialVersionUID = 3847261938472619384L;
+
+    private class ArrayListIterator implements ListIterator<E> {
+        private int index = 0;
+
+        public ArrayListIterator(int index) {
+            if (index < 0 || index > size) {
+                throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            }
+            this.index = index;
+        }
+
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        public E next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return data[index++];
+        }
+
+        public boolean hasPrevious() {
+            return index > 0;
+        }
+
+        public E previous() {
+            if (!hasPrevious()) throw new NoSuchElementException();
+            return data[--index];
+        }
+
+        public int nextIndex() {
+            return index;
+        }
+
+        public int previousIndex() {
+            return index - 1;
+        }
+
+        public void remove() {
+            if (index == 0) throw new IllegalStateException();
+            ArrayList.this.remove(--index);
+        }
+
+        public void set(E e) {
+            if (index == 0) throw new IllegalStateException();
+            ArrayList.this.set(index - 1, e);
+        }
+
+        public void add(E e) {
+            ArrayList.this.add(index++, e);
+        }
+    }
 }
 
 

@@ -233,11 +233,18 @@ public class CircularDoublyLinkedList<E> implements List<E> {
     }
 
     public ListIterator<E> listIterator() {
-        return new CircularListIterator(0);
+        return new CircularListIterator();
     }
 
     public ListIterator<E> listIterator(int index) {
-        return new CircularListIterator(index);
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        CircularListIterator iterator = new CircularListIterator();
+        for (int i = 0; i < index; i++) {
+            iterator.next();
+        }
+        return iterator;
     }
 
     @Override
@@ -259,14 +266,6 @@ public class CircularDoublyLinkedList<E> implements List<E> {
         private Node<E> current = head;
         private int nextIndex = 0;
 
-        public CircularListIterator(int index) {
-            if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
-            for (int i = 0; i < index; i++) {
-                current = current.getNext();
-            }
-            nextIndex = index;
-        }
-
         @Override
         public boolean hasNext() {
             return size != 0;
@@ -277,7 +276,7 @@ public class CircularDoublyLinkedList<E> implements List<E> {
             if (size == 0) throw new NoSuchElementException();
             E value = current.getElement();
             current = current.getNext();
-            nextIndex = (nextIndex + 1) % size;
+            nextIndex = nextIndex < size - 1 ? nextIndex + 1 : 0;
             return value;
         }
 
@@ -290,7 +289,7 @@ public class CircularDoublyLinkedList<E> implements List<E> {
         public E previous() {
             if (size == 0) throw new NoSuchElementException();
             current = current.getPrevious();
-            nextIndex = (nextIndex - 1 + size) % size;
+            nextIndex = nextIndex > 0 ? nextIndex - 1 : size - 1;
             return current.getElement();
         }
 
@@ -301,7 +300,7 @@ public class CircularDoublyLinkedList<E> implements List<E> {
 
         @Override
         public int previousIndex() {
-            return (nextIndex - 1 + size) % size;
+            return nextIndex > 0 ? nextIndex - 1 : size - 1;
         }
 
         @Override
