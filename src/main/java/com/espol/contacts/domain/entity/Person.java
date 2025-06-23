@@ -49,7 +49,14 @@ public class Person extends Contact {
 
     @Override
     public String toString() {
-        return super.toString() + (lastName != null ? " " + lastName : "");
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (middleName != null && !middleName.isEmpty()) {
+            sb.append(" ").append(middleName);
+        }
+        if (lastName != null && !lastName.isEmpty()) {
+            sb.append(" ").append(lastName);
+        }
+        return sb.toString();
     }
 
     private static final long serialVersionUID = 5728391029384756102L;
