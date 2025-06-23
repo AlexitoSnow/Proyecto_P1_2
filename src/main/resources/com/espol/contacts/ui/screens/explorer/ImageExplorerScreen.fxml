@@ -9,8 +9,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
-<BorderPane style="-fx-background-color: black;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.screens.explorer.ImageExplorerScreen">
+<BorderPane fx:id="root" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.espol.contacts.ui.screens.explorer.ImageExplorerScreen">
    <center>
       <ImageView fx:id="image" pickOnBounds="true" preserveRatio="true" />
    </center>
@@ -47,6 +46,9 @@
          <children>
             <Text fx:id="infoTxt" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Explorer" HBox.hgrow="ALWAYS" />
          </children>
+         <padding>
+            <Insets bottom="4.0" top="4.0" />
+         </padding>
       </HBox>
    </bottom>
 </BorderPane>
