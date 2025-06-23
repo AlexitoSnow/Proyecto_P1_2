@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.TextFlow?>
+
+<fx:root prefHeight="600.0" prefWidth="700.0" type="DialogPane" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308">
+         <content>
+            <VBox spacing="8.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <TitledPane maxHeight="1.7976931348623157E308" text="Búsqueda de Contactos" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox alignment="TOP_CENTER">
+                           <children>
+                              <TextFlow fx:id="searchInfo" />
+                              <ImageView fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@/assets/images/search.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+                  <TitledPane maxHeight="1.7976931348623157E308" text="Navegación de Contactos" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox alignment="TOP_CENTER">
+                           <children>
+                              <TextFlow fx:id="navigationInfo" />
+                              <ImageView fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@/assets/images/navigation.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+                  <TitledPane maxHeight="1.7976931348623157E308" text="Contactos Relacionados" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox alignment="TOP_CENTER">
+                           <children>
+                              <TextFlow fx:id="relatedContactsInfo" />
+                              <ImageView fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@/assets/images/relatedContact.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+                  <TitledPane maxHeight="1.7976931348623157E308" text="Galería" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox alignment="TOP_CENTER">
+                           <children>
+                              <TextFlow fx:id="galleryInfo" />
+                              <ImageView fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@/assets/images/imageExplorer.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+               </children>
+            </VBox>
+         </content></ScrollPane>
+   </content>
+   <padding>
+      <Insets left="8.0" right="8.0" top="8.0" />
+   </padding>
+</fx:root>
