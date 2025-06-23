@@ -1,9 +1,9 @@
 package com.espol.contacts.domain.entity.enums;
 
 public enum DateType {
-    BIRTHDAY("CUMPLEAÑOS"),
-    ANNIVERSARY("ANIVERSARIO"),
-    OTHER("OTRO");
+    BIRTHDAY("Cumpleaños"),
+    ANNIVERSARY("Aniversario"),
+    OTHER("Otro");
 
     private final String name;
 

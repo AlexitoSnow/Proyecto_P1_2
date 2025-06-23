@@ -1,25 +1,22 @@
 package com.espol.contacts.domain.entity.enums;
 
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome6.FontAwesomeBrands;
-
-import static org.kordamp.ikonli.material2.Material2AL.COMMENT;
+import com.espol.contacts.config.constants.Icons;
 
 public enum SocialPlatform {
-    LINKEDIN(FontAwesomeBrands.LINKEDIN),
-    INSTAGRAM(FontAwesomeBrands.INSTAGRAM),
-    TIKTOK(FontAwesomeBrands.TIKTOK),
-    FACEBOOK(FontAwesomeBrands.FACEBOOK),
-    X(FontAwesomeBrands.TWITTER),
-    OTRO(COMMENT);
+    LinkedIn(Icons.LINKEDIN),
+    Instagram(Icons.INSTAGRAM),
+    Tiktok(Icons.TIKTOK),
+    Facebook(Icons.FACEBOOK),
+    X(Icons.X),
+    Otro(Icons.COMMENT);
 
-    private final Ikon iconCode;
+    private final String iconCode;
 
-    SocialPlatform(Ikon iconCode) {
+    SocialPlatform(String iconCode) {
         this.iconCode = iconCode;
     }
 
-    public Ikon getIcon() {
+    public String getIcon() {
         return iconCode;
     }
 }

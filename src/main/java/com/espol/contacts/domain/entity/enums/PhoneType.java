@@ -1,11 +1,11 @@
 package com.espol.contacts.domain.entity.enums;
 
 public enum PhoneType {
-    MAIN("PRINCIPAL"),
-    PHONE("MÓVIL"),
-    HOME("CASA"),
-    WORK("TRABAJO"),
-    OTHER("OTRO");
+    MAIN("Principal"),
+    PHONE("Móvil"),
+    HOME("Casa"),
+    WORK("Trabajo"),
+    OTHER("Otro");
 
     private final String value;
 
