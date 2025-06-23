@@ -1,0 +1,23 @@
+.contact-cell {
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-background-radius: 12;
+}
+
+.contact-cell .label,
+.contact-cell .ikonli-font-icon {
+    -fx-fill: -VioletText;
+    -fx-text-fill: -VioletText;
+}
+
+.contact-cell-selected {
+    -fx-background-color: -VioletActive;
+    -fx-font-weight: bold;
+}
+
+.contact-cell:hover {
+    -fx-background-color: -VioletHover;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-border-color: -VioletBorder;
+}
