@@ -149,7 +149,7 @@ public class ExtraInfoView extends ScrollPane {
     @FXML
     void onToggleFavorite(ActionEvent event) {
         contact.setFavorite(!contact.isFavorite());
-        favoriteIcon.setIconLiteral(contact.isFavorite() ? Icons.S_STAR :Icons.REGULAR_STAR);
+        favoriteIcon.setIconLiteral(contact.isFavorite() ? Icons.S_STAR :Icons.R_STAR);
         repository.save(contact);
     }
 

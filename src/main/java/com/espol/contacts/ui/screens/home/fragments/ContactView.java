@@ -1,5 +1,6 @@
 package com.espol.contacts.ui.screens.home.fragments;
 
+import com.espol.contacts.config.constants.Icons;
 import com.espol.contacts.domain.entity.Company;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Person;
@@ -7,23 +8,18 @@ import com.espol.contacts.ui.fragments.attributeField.AttributeViewField;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
-import org.kordamp.ikonli.fontawesome6.FontAwesomeRegular;
-import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
-import org.kordamp.ikonli.material2.Material2MZ;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.util.stream.Collectors;
-
-import static org.kordamp.ikonli.material2.Material2AL.LOCATION_ON;
 
 public class ContactView extends VBox {
 
     private ContactView() {
         this.setAlignment(Pos.TOP_CENTER);
-        this.setSpacing(10);
-        this.setPadding(new Insets(8));
+        this.setSpacing(16);
+        this.setPadding(new Insets(16));
     }
 
     public static ContactViewBuilder builder() {
@@ -35,17 +31,17 @@ public class ContactView extends VBox {
 
         public ContactViewBuilder companyBuilder(Company contact) {
             this.contactView = new ContactView();
-            contactView.getChildren().add(new AttributeViewField("Company Name", contact.getName(), FontAwesomeRegular.BUILDING));
-            contactView.getChildren().add(new AttributeViewField("Industry", contact.getIndustry().name(), FontAwesomeSolid.INDUSTRY));
+            contactView.getChildren().add(new AttributeViewField("Nombre de la Compañía", contact.getName(), Icons.COMPANY));
+            contactView.getChildren().add(new AttributeViewField("Industria", contact.getIndustry().toString(), Icons.INDUSTRY));
             addCommonAttributes(contact);
             return this;
         }
 
         public ContactViewBuilder personBuilder(Person contact) {
             this.contactView = new ContactView();
-            contactView.getChildren().add(new AttributeViewField("First Name", contact.getName(), FontAwesomeRegular.USER));
-            contactView.getChildren().add(new AttributeViewField("Middle Name", contact.getMiddleName(), null));
-            contactView.getChildren().add(new AttributeViewField("Last Name", contact.getLastName(), null));
+            contactView.getChildren().add(new AttributeViewField("Primer Nombre", contact.getName(), Icons.R_USER));
+            contactView.getChildren().add(new AttributeViewField("Segundo Nombre", contact.getMiddleName(), null));
+            contactView.getChildren().add(new AttributeViewField("Apellido", contact.getLastName(), null));
             addCommonAttributes(contact);
             return this;
         }
@@ -53,11 +49,11 @@ public class ContactView extends VBox {
         private void addCommonAttributes(Contact contact) {
             contactView.getChildren().addAll(contact.getPhones()
                     .stream().map(phone -> new AttributeViewField(
-                            phone.getType().name(), phone.getNumber(), Material2MZ.PHONE))
+                            phone.getType().toString(), phone.getNumber(), Icons.PHONE))
                     .collect(Collectors.toList()));
             contactView.getChildren().addAll(contact.getEmails()
                     .stream().map(email -> {
-                        final AttributeViewField emailField = new AttributeViewField(email.getType().name(), email.getEmail(), Material2MZ.MAIL);
+                        final AttributeViewField emailField = new AttributeViewField(email.getType().toString(), email.getEmail(), Icons.MAIL);
                         emailField.setOnIconPressed(event -> {
                             try {
                                 Desktop.getDesktop().mail(URI.create("mailto:" + email.getEmail()));
@@ -68,7 +64,7 @@ public class ContactView extends VBox {
                     .collect(Collectors.toList()));
             contactView.getChildren().addAll(contact.getAddresses()
                     .stream().map(address -> {
-                        final AttributeViewField addressField = new AttributeViewField(address.getType().name(), address.toString() == null || address.toString().isEmpty() ? address.getMapUrl() : address.toString(), LOCATION_ON);
+                        final AttributeViewField addressField = new AttributeViewField(address.getType().toString(), address.toString() == null || address.toString().isEmpty() ? address.getMapUrl() : address.toString(), Icons.LOCATION);
                         addressField.setOnIconPressed(event -> {
                             try {
                                 Desktop.getDesktop().browse(URI.create(address.getMapUrl()));
@@ -79,13 +75,13 @@ public class ContactView extends VBox {
                     .collect(Collectors.toList()));
             contactView.getChildren().addAll(contact.getDates()
                     .stream().map(date -> new AttributeViewField(
-                            date.getType().name(), date.toString(), Material2MZ.PERM_CONTACT_CALENDAR))
+                            date.getType().toString(), date.toString(), Icons.CALENDAR))
                     .collect(Collectors.toList()));
             contactView.getChildren().addAll(contact.getSocialMedias()
                     .stream().map(media -> new AttributeViewField(
-                            media.getPlatform().name(), media.getUsername(), media.getPlatform().getIcon()))
+                            media.getPlatform().toString(), media.getUsername(), media.getPlatform().getIcon()))
                     .collect(Collectors.toList()));
-            contactView.getChildren().add(new AttributeViewField("Notas", contact.getNotes(), Material2MZ.NOTES));
+            contactView.getChildren().add(new AttributeViewField("Notas", contact.getNotes(), Icons.NOTES));
         }
 
         public ContactView build() {

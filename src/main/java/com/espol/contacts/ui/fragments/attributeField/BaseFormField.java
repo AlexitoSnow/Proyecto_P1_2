@@ -2,7 +2,6 @@ package com.espol.contacts.ui.fragments.attributeField;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
-import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.function.Function;
@@ -18,7 +17,7 @@ public abstract class BaseFormField<E> extends VBox {
     protected static final double CONTAINER_SPACING = 4.0;
     protected static final int ICON_SIZE = 16;
 
-    protected BaseFormField(String hintText, Ikon icon) {
+    protected BaseFormField(String hintText, String icon) {
         this.hintText = hintText;
         leadingIcon = new FontIcon(icon);
         leadingIcon.setIconSize(ICON_SIZE);
@@ -26,9 +25,9 @@ public abstract class BaseFormField<E> extends VBox {
         setMaxWidth(Double.MAX_VALUE);
     }
 
-    protected void changeIcon(Ikon icon) {
+    protected void changeIcon(String icon) {
         if (leadingIcon != null) {
-            leadingIcon.setIconCode(icon);
+            leadingIcon.setIconLiteral(icon);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.espol.contacts.ui.screens.login;
 
 import com.espol.contacts.config.SessionManager;
+import com.espol.contacts.config.constants.Icons;
 import com.espol.contacts.config.router.AppRouter;
 import com.espol.contacts.config.router.Routes;
 import com.espol.contacts.domain.entity.User;
@@ -20,10 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.kordamp.ikonli.fontawesome6.FontAwesomeRegular.USER;
-import static org.kordamp.ikonli.fontawesome6.FontAwesomeSolid.EXCLAMATION_TRIANGLE;
-import static org.kordamp.ikonli.material2.Material2AL.LOCK;
-
 public class LoginScreen implements Initializer {
 
     @FXML
@@ -40,8 +37,8 @@ public class LoginScreen implements Initializer {
     public void initialize(Map<String, Object> params) {
         Function<String, String> commonValidator = text -> text == null || text.isEmpty() ? "Campo requerido" : null;
 
-        userField = new SimpleFormField("Nombre de usuario", USER);
-        passwordField = new SimpleFormField("Contraseña", LOCK);
+        userField = new SimpleFormField("Nombre de usuario", Icons.R_USER);
+        passwordField = new SimpleFormField("Contraseña", Icons.LOCK);
 
         userField.setValidator(commonValidator);
         passwordField.setValidator(commonValidator);
@@ -64,7 +61,7 @@ public class LoginScreen implements Initializer {
                     Notifications.create()
                             .title("Error de validación")
                             .text(result)
-                            .graphic(new FontIcon(EXCLAMATION_TRIANGLE))
+                            .graphic(new FontIcon(Icons.EXCLAMATION_TRIANGLE))
                             .show();
                     return;
                 }
@@ -79,7 +76,7 @@ public class LoginScreen implements Initializer {
             Notifications.create()
                     .title("Error de inicio de sesión")
                     .text("Usuario o contraseña incorrectos")
-                    .graphic(new FontIcon(EXCLAMATION_TRIANGLE))
+                    .graphic(new FontIcon(Icons.EXCLAMATION_TRIANGLE))
                     .show();
             userField.setValue(null);
             passwordField.setValue(null);

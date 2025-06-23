@@ -10,7 +10,7 @@ public class ChoiceFormField<T> extends BaseFormField<T> {
 
     private final T[] options;
 
-    public ChoiceFormField(String hintText, T[] options, Ikon leadingIcon) {
+    public ChoiceFormField(String hintText, T[] options, String leadingIcon) {
         super(hintText, leadingIcon);
         this.options = options;
         initializeField();

@@ -1,5 +1,6 @@
 package com.espol.contacts.ui.fragments.attributeField;
 
+import com.espol.contacts.config.constants.Icons;
 import com.espol.contacts.domain.entity.ImportantDate;
 import com.espol.contacts.domain.entity.enums.DateType;
 import javafx.geometry.Pos;
@@ -9,15 +10,13 @@ import javafx.scene.layout.HBox;
 
 import java.time.LocalDate;
 
-import static org.kordamp.ikonli.fontawesome6.FontAwesomeSolid.CALENDAR;
-
 public class DateFormField extends BaseFormField<ImportantDate> {
 
     private final DateType[] options;
     private ChoiceBox<DateType> choiceBox;
 
     public DateFormField() {
-        super("Fecha Importante", CALENDAR);
+        super("Fecha Importante", Icons.CALENDAR);
         this.options = DateType.values();
         value = new ImportantDate();
         initializeField();
@@ -43,6 +42,10 @@ public class DateFormField extends BaseFormField<ImportantDate> {
         value.setDate(datePicker.getValue());
         datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             value.setDate(newValue);
+        });
+        datePicker.getEditor().setOnMouseClicked(event -> {
+            datePicker.hide();
+            datePicker.show();
         });
     }
 

@@ -17,8 +17,8 @@ public class ProfilePicture extends StackPane {
     public ProfilePicture(String path, int size, boolean isEditable) {
         this.isEditable = isEditable;
         imageView = new ImageView();
-        FontIcon icon = new FontIcon(Icons.S_USER_CIRCLE);
-        FontIcon editIcon = new FontIcon(Icons.S_EDIT);
+        FontIcon icon = new FontIcon(Icons.USER_CIRCLE);
+        FontIcon editIcon = new FontIcon(Icons.EDIT);
 
         icon.setIconSize(size);
         editIcon.setIconSize(size / 5);
@@ -26,12 +26,12 @@ public class ProfilePicture extends StackPane {
         imageView.setFitWidth(size);
         imageView.setFitHeight(size);
 
+        this.setMinSize(size, size);
+        this.setPrefSize(size, size);
+        this.setMaxSize(size, size);
+
         double radius = Math.min(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
-        Circle clip = new Circle(
-                imageView.getFitWidth() / 2,
-                imageView.getFitHeight() / 2,
-                radius
-        );
+        Circle clip = new Circle((double) size / 2, (double) size / 2,radius);
         imageView.setClip(clip);
 
         if (path != null && !path.isEmpty()) {
@@ -55,7 +55,6 @@ public class ProfilePicture extends StackPane {
                 }
             });
         }
-        this.setPrefSize(0, 0);
     }
 
     public ProfilePicture(String path, int size) {

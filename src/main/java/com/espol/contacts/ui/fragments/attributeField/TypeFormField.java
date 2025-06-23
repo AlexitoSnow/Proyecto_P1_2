@@ -4,25 +4,24 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import org.kordamp.ikonli.Ikon;
 
 public class TypeFormField<K> extends BaseFormField<String> {
 
     private final K[] options;
     private K type;
-    private final Ikon[] ikons;
+    private final String[] icons;
     private ChoiceBox<K> choiceBox;
 
-    public TypeFormField(String hintText, K[] options, Ikon leadingIcon) {
+    public TypeFormField(String hintText, K[] options, String leadingIcon) {
         super(hintText, leadingIcon);
-        ikons = null;
+        icons = null;
         this.options = options;
         initializeField();
     }
 
-    public TypeFormField(String hintText, K[] options, Ikon[] ikons) {
-        super(hintText, ikons[0]);
-        this.ikons = ikons;
+    public TypeFormField(String hintText, K[] options, String[] icons) {
+        super(hintText, icons[0]);
+        this.icons = icons;
         this.options = options;
         initializeField();
     }
@@ -35,8 +34,8 @@ public class TypeFormField<K> extends BaseFormField<String> {
         type = choiceBox.getSelectionModel().getSelectedItem();
         choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             type = newValue;
-            if (ikons != null) {
-                changeIcon(ikons[choiceBox.getSelectionModel().getSelectedIndex()]);
+            if (icons != null) {
+                changeIcon(icons[choiceBox.getSelectionModel().getSelectedIndex()]);
             }
         });
     }

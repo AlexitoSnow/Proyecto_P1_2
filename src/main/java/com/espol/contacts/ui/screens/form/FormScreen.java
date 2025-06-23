@@ -84,14 +84,14 @@ public class FormScreen implements Initializer {
             Notifications.create()
                     .title("Información:")
                     .text(this.event)
-                    .graphic(new FontIcon(Icons.S_CHECK_CIRCLE))
+                    .graphic(new FontIcon(Icons.CHECK_CIRCLE))
                     .show();
             goBack(null);
         } catch (RuntimeException e) {
             Notifications.create()
                     .title("Error")
                     .text("No se pudo guardar el contacto: " + e.getMessage())
-                    .graphic(new FontIcon(Icons.S_EXCLAMATION_TRIANGLE))
+                    .graphic(new FontIcon(Icons.EXCLAMATION_TRIANGLE))
                     .show();
         }
     }

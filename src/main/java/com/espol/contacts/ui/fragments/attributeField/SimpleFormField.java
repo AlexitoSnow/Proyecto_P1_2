@@ -6,11 +6,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import org.kordamp.ikonli.Ikon;
 
 public class SimpleFormField extends BaseFormField<String> {
 
-    public SimpleFormField(String hintText, Ikon leadingIcon) {
+    public SimpleFormField(String hintText, String leadingIcon) {
         super(hintText, leadingIcon);
         initializeField();
     }

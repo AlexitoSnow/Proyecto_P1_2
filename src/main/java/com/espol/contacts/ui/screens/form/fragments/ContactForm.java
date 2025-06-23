@@ -1,5 +1,6 @@
 package com.espol.contacts.ui.screens.form.fragments;
 
+import com.espol.contacts.config.constants.Icons;
 import com.espol.contacts.domain.entity.*;
 import com.espol.contacts.domain.entity.enums.*;
 import com.espol.contacts.ui.fragments.attributeField.*;
@@ -17,16 +18,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static org.kordamp.ikonli.material2.Material2MZ.PLUS;
 
 public class ContactForm extends VBox {
     private final Logger LOGGER = Logger.getLogger(ContactForm.class.getName());
@@ -81,12 +78,12 @@ public class ContactForm extends VBox {
 
     private Button buildAddButton(TitledPane titledPane) {
         final VBox container = (VBox) titledPane.getContent();
-        final Button button = new Button(null, new FontIcon(PLUS));
+        final Button button = new Button(null, new FontIcon(Icons.ADD));
         button.getStyleClass().add("text-icon-button");
         button.setTooltip(new Tooltip("Agregar " + titledPane.getText()));
         button.setOnAction(e -> {
             final HBox row = new HBox(4);
-            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.MINUS));
+            final Button removeButton = new Button(null, new FontIcon(Icons.REMOVE));
             removeButton.getStyleClass().add("text-icon-button");
             BaseFormField field;
             removeButton.setTooltip(new Tooltip("Remover"));
@@ -94,16 +91,19 @@ public class ContactForm extends VBox {
 
             switch (titledPane.getText()) {
                 case "Teléfonos":
-                    field = new TypeFormField<>("Teléfono", PhoneType.values(), FontAwesomeSolid.PHONE);
+                    field = new TypeFormField<>("Teléfono", PhoneType.values(), Icons.PHONE);
                     break;
                 case "E-mails":
-                    field = new TypeFormField<>("Email", EmailType.values(), FontAwesomeSolid.ENVELOPE);
+                    field = new TypeFormField<>("Email", EmailType.values(), Icons.MAIL);
                     break;
                 case "Fechas Importantes":
                     field = new DateFormField();
                     break;
                 case "Redes Sociales":
-                    field = new TypeFormField<>("Red Social", SocialPlatform.values(), Arrays.stream(SocialPlatform.values()).map(SocialPlatform::getIcon).toArray(Ikon[]::new));
+                    String[] icons = Arrays.stream(SocialPlatform.values())
+                            .map(SocialPlatform::getIcon)
+                            .toArray(String[]::new);
+                    field = new TypeFormField<>("Red Social", SocialPlatform.values(), icons);
                     break;
                 default:
                     field = new AddressFormField();
@@ -135,9 +135,9 @@ public class ContactForm extends VBox {
 
     private void initializeForm() {
         if (contactType == ContactType.Persona) {
-            nameField = new SimpleFormField("Primer Nombre", FontAwesomeSolid.USER);
-            middleNameField = new SimpleFormField("Segundo Nombre", FontAwesomeSolid.USER);
-            lastNameField = new SimpleFormField("Apellido", FontAwesomeSolid.USER);
+            nameField = new SimpleFormField("Primer Nombre", Icons.S_USER);
+            middleNameField = new SimpleFormField("Segundo Nombre", Icons.S_USER);
+            lastNameField = new SimpleFormField("Apellido", Icons.S_USER);
 
             this.getChildren().addAll(
                     nameField,
@@ -145,13 +145,13 @@ public class ContactForm extends VBox {
                     lastNameField
             );
         } else {
-            nameField = new SimpleFormField("Nombre de la empresa", FontAwesomeSolid.BUILDING);
-            industryField = new ChoiceFormField<>("Industria", IndustryType.values(), FontAwesomeSolid.INDUSTRY);
+            nameField = new SimpleFormField("Nombre de la empresa", Icons.COMPANY);
+            industryField = new ChoiceFormField<>("Industria", IndustryType.values(), Icons.INDUSTRY);
             this.getChildren().addAll(nameField, industryField);
         }
 
         // Campo de notas
-        notesField = new SimpleFormField("Notas", FontAwesomeSolid.STICKY_NOTE);
+        notesField = new SimpleFormField("Notas", Icons.NOTES);
 
         // Agregar campos al formulario
         this.getChildren().addAll(
@@ -182,13 +182,13 @@ public class ContactForm extends VBox {
         // Phones
         for (Phone phone : contact.getPhones()) {
             final HBox row = new HBox(4);
-            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            final Button removeButton = new Button(null, new FontIcon(Icons.TRASH));
             removeButton.getStyleClass().add("text-icon-button");
             removeButton.setTooltip(new Tooltip("Eliminar"));
             VBox container = (VBox) phonesTitledPane.getContent();
             removeButton.setOnAction(ev -> container.getChildren().remove(row));
 
-            TypeFormField<PhoneType> field = new TypeFormField<>("Teléfono", PhoneType.values(), FontAwesomeSolid.PHONE);
+            TypeFormField<PhoneType> field = new TypeFormField<>("Teléfono", PhoneType.values(), Icons.PHONE);
             field.setType(phone.getType());
             field.setValue(phone.getNumber());
 
@@ -203,13 +203,13 @@ public class ContactForm extends VBox {
         // Emails (similar logic to phones)
         for (Email email : contact.getEmails()) {
             final HBox row = new HBox(4);
-            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            final Button removeButton = new Button(null, new FontIcon(Icons.TRASH));
             removeButton.getStyleClass().add("text-icon-button");
             removeButton.setTooltip(new Tooltip("Eliminar"));
             VBox container = (VBox) emailsTitledPane.getContent();
             removeButton.setOnAction(ev -> container.getChildren().remove(row));
 
-            TypeFormField<EmailType> field = new TypeFormField<>("Email", EmailType.values(), FontAwesomeSolid.ENVELOPE);
+            TypeFormField<EmailType> field = new TypeFormField<>("Email", EmailType.values(), Icons.MAIL);
             field.setType(email.getType());
             field.setValue(email.getEmail());
 
@@ -224,7 +224,7 @@ public class ContactForm extends VBox {
         // Addresses (using your new AddressFormField)
         for (Address address : contact.getAddresses()) {
             final HBox row = new HBox(4);
-            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            final Button removeButton = new Button(null, new FontIcon(Icons.TRASH));
             removeButton.getStyleClass().add("text-icon-button");
             removeButton.setTooltip(new Tooltip("Eliminar"));
             VBox container = (VBox) addressesTitledPane.getContent();
@@ -245,7 +245,7 @@ public class ContactForm extends VBox {
         // Dates (similar logic)
         for (ImportantDate date : contact.getDates()) {
             final HBox row = new HBox(4);
-            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            final Button removeButton = new Button(null, new FontIcon(Icons.TRASH));
             removeButton.getStyleClass().add("text-icon-button");
             removeButton.setTooltip(new Tooltip("Eliminar"));
             VBox container = (VBox) datesTitledPane.getContent();
@@ -266,13 +266,16 @@ public class ContactForm extends VBox {
         // Social Media (similar logic)
         for (SocialMedia socialMedia : contact.getSocialMedias()) {
             final HBox row = new HBox(4);
-            final Button removeButton = new Button(null, new FontIcon(FontAwesomeSolid.TRASH));
+            final Button removeButton = new Button(null, new FontIcon(Icons.TRASH));
             removeButton.getStyleClass().add("text-icon-button");
             removeButton.setTooltip(new Tooltip("Eliminar"));
             VBox container = (VBox) socialMediaTitledPane.getContent();
             removeButton.setOnAction(ev -> container.getChildren().remove(row));
 
-            TypeFormField<SocialPlatform> field = new TypeFormField<>("Red Social", SocialPlatform.values(), Arrays.stream(SocialPlatform.values()).map(SocialPlatform::getIcon).toArray(Ikon[]::new));
+            String[] icons = Arrays.stream(SocialPlatform.values())
+                    .map(SocialPlatform::getIcon)
+                    .toArray(String[]::new);
+            TypeFormField<SocialPlatform> field = new TypeFormField<>("Red Social", SocialPlatform.values(), icons);
             field.setType(socialMedia.getPlatform());
             field.setValue(socialMedia.getUsername());
 

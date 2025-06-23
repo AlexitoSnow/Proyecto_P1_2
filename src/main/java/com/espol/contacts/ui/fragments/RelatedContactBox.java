@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -51,7 +52,7 @@ public class RelatedContactBox extends HBox {
                 if (result != null) {
                     contactSelectorButton.setText(result.toString());
                     contactSelectorButton.setGraphic(new FontIcon(
-                            result.getContactType() == ContactType.Persona ? Icons.S_USER : Icons.S_COMPANY
+                            result.getContactType() == ContactType.Persona ? Icons.S_USER : Icons.COMPANY
                     ));
                     value.setContact(result);
                 } else if (value.getContact() == null) {
@@ -59,7 +60,7 @@ public class RelatedContactBox extends HBox {
                 }
             });
 
-            removeButton = new Button(null, new FontIcon(Icons.S_REMOVE));
+            removeButton = new Button(null, new FontIcon(Icons.REMOVE));
 
             choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 value.setRelationship(newValue);
@@ -84,6 +85,10 @@ public class RelatedContactBox extends HBox {
             this.value = relatedContact;
             choiceBox.setValue(relatedContact.getRelationship());
             contactSelectorButton.setText(relatedContact.getContact().toString());
+            contactSelectorButton.setGraphic(new FontIcon(
+                    relatedContact.getContact().getContactType() == ContactType.Persona ? Icons.S_USER : Icons.COMPANY
+            ));
+            contactSelectorButton.setTooltip(new Tooltip("Ver contacto " + relatedContact.getContact().toString()));
         }
     }
 

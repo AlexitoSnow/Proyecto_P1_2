@@ -24,7 +24,7 @@ public class ImageGallery extends StackPane {
         imageView = new ImageView();
         imageView.setImage(new Image("file:///" + path));
         if (isEditable) {
-            removeButton = new Button(null, new FontIcon(Icons.S_REMOVE));
+            removeButton = new Button(null, new FontIcon(Icons.REMOVE));
             removeButton.setCursor(Cursor.HAND);
             this.getChildren().addAll(imageView, removeButton);
             StackPane.setAlignment(removeButton, Pos.TOP_RIGHT);
@@ -33,7 +33,7 @@ public class ImageGallery extends StackPane {
             this.getChildren().add(imageView);
         }
         this.setPrefSize(100, 100);
-        imageView.setFitWidth(100);
+        imageView.setPreserveRatio(true);
         imageView.setFitHeight(100);
     }
 

@@ -1,5 +1,6 @@
 package com.espol.contacts.ui.fragments.attributeField;
 
+import com.espol.contacts.config.constants.Icons;
 import com.espol.contacts.domain.entity.Address;
 import com.espol.contacts.domain.entity.enums.AddressType;
 import javafx.geometry.Insets;
@@ -8,11 +9,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import org.kordamp.ikonli.fontawesome6.FontAwesomeSolid;
 
 public class AddressFormField extends BaseFormField<Address> {
 
-    private ChoiceBox<AddressType> typeChoiceBox;
+    private final ChoiceBox<AddressType> typeChoiceBox;
     private SimpleFormField streetField;
     private SimpleFormField cityField;
     private SimpleFormField stateField;
@@ -21,7 +21,7 @@ public class AddressFormField extends BaseFormField<Address> {
     private SimpleFormField mapUrlField;
 
     public AddressFormField() {
-        super("Nueva dirección", FontAwesomeSolid.ADDRESS_BOOK);
+        super("Nueva dirección", Icons.ADDRESS_BOOK);
         typeChoiceBox = new ChoiceBox<>();
         typeChoiceBox.getItems().addAll(AddressType.values());
         typeChoiceBox.getSelectionModel().selectFirst();
@@ -69,12 +69,12 @@ public class AddressFormField extends BaseFormField<Address> {
 
     @Override
     public void initializeField() {
-        streetField = new SimpleFormField("Calle/Número", FontAwesomeSolid.ROAD);
-        cityField = new SimpleFormField("Ciudad", FontAwesomeSolid.CITY);
-        stateField = new SimpleFormField("Estado/Provincia", FontAwesomeSolid.GLOBE);
-        postalCodeField = new SimpleFormField("Código Postal", FontAwesomeSolid.ENVELOPE);
-        countryField = new SimpleFormField("País", FontAwesomeSolid.GLOBE_AMERICAS);
-        mapUrlField = new SimpleFormField("URL de Mapa", FontAwesomeSolid.MAP_PIN);
+        streetField = new SimpleFormField("Calle/Número", Icons.ROAD);
+        cityField = new SimpleFormField("Ciudad", Icons.CITY);
+        stateField = new SimpleFormField("Estado/Provincia", Icons.GLOBE);
+        postalCodeField = new SimpleFormField("Código Postal", Icons.MAIL);
+        countryField = new SimpleFormField("País", Icons.COUNTRY);
+        mapUrlField = new SimpleFormField("URL de Mapa", Icons.MAP_PIN);
 
         mainField = streetField;
 
