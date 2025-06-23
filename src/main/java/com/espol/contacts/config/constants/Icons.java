@@ -1,14 +1,5 @@
 package com.espol.contacts.config.constants;
 
-// TODO: Search everywhere in the project for Ikons, check the icon literal value, add it here, and replace the Ikon for this Icon constant
-// TODO See the example of the REGULAR_STAR and SOLID_STAR constants below
-
-/**
- * This class contains constants for icon names used in the application. <p>
- * It provides a centralized place to manage icon names, making it easier to maintain and update them. <p>
- * REGULAR ICONS: do not require a solid background.<p>
- * SOLID ICONS: require a solid background.
- */
 public class Icons {
 
     private Icons() {}
@@ -17,14 +8,36 @@ public class Icons {
      * For example, look for the constants in the FontAwesomeRegular class:
      * @see org.kordamp.ikonli.fontawesome6.FontAwesomeRegular
      */
-    public static final String REGULAR_STAR = "far-star";
 
-    public static final String S_EDIT = "fas-edit";
-    public static final String S_USER_CIRCLE = "fas-user-circle";
+    public static final String EDIT = "fas-edit";
+    public static final String USER_CIRCLE = "fas-user-circle";
+    public static final String R_STAR = "far-star";
     public static final String S_STAR = "fas-star";
-    public static final String S_REMOVE = "fas-minus";
-    public static final String S_CHECK_CIRCLE = "fas-check-circle";
-    public static final String S_COMPANY = "fas-building";
+    public static final String REMOVE = "fas-minus";
+    public static final String CHECK_CIRCLE = "fas-check-circle";
+    public static final String COMPANY = "fas-building";
+    public static final String INDUSTRY = "fas-industry";
     public static final String S_USER = "fas-user";
-    public static final String S_EXCLAMATION_TRIANGLE = "fas-exclamation-triangle";
+    public static final String R_USER = "far-user";
+    public static final String EXCLAMATION_TRIANGLE = "fas-exclamation-triangle";
+    public static final String LINKEDIN = "fab-linkedin";
+    public static final String INSTAGRAM = "fab-instagram";
+    public static final String TIKTOK = "fab-tiktok";
+    public static final String FACEBOOK = "fab-facebook";
+    public static final String PHONE = "mdmz-phone";
+    public static final String X = "fab-twitter";
+    public static final String COMMENT = "mdal-comment";
+    public static final String MAIL = "mdmz-mail";
+    public static final String LOCATION = "mdal-location_on";
+    public static final String CALENDAR = "mdmz-perm_contact_calendar";
+    public static final String NOTES = "mdmz-notes";
+    public static final String GLOBE = "fas-globe";
+    public static final String CITY = "fas-city";
+    public static final String ROAD = "fas-road";
+    public static final String COUNTRY = "fas-globe-americas";
+    public static final String MAP_PIN = "fas-map-pin";
+    public static final String ADDRESS_BOOK = "fas-address-book";
+    public static final String LOCK = "mdal-lock";
+    public static final String TRASH = "fas-trash";
+    public static final String ADD = "mdmz-plus";
 }
