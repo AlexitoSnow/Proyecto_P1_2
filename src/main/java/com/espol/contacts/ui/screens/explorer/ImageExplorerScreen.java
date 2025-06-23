@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 
 import java.util.ListIterator;
@@ -17,6 +18,8 @@ public class ImageExplorerScreen implements Initializer {
     private Text infoTxt;
     @FXML
     private ImageView image;
+    @FXML
+    private BorderPane root;
 
     private CircularDoublyLinkedList<String> imagePaths;
     private ListIterator<String> iterator;
@@ -24,6 +27,14 @@ public class ImageExplorerScreen implements Initializer {
     public void initialize(Map<String, Object> params) {
         this.imagePaths = (CircularDoublyLinkedList<String>) params.get("list");
         Integer currentIndex = Integer.parseInt(params.get("index").toString());
+        image.setPreserveRatio(true);
+
+        root.widthProperty().addListener((obs, oldVal, newVal) -> {
+            image.setFitWidth(newVal.doubleValue() * 0.7);
+        });
+        root.heightProperty().addListener((obs, oldVal, newVal) -> {
+            image.setFitHeight(newVal.doubleValue() * 0.7);
+        });
 
         if (imagePaths == null || imagePaths.isEmpty()) {
             if (infoTxt != null) infoTxt.setText("No images available.");
