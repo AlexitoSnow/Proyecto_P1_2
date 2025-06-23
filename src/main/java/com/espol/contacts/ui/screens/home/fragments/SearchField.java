@@ -1,5 +1,6 @@
 package com.espol.contacts.ui.screens.home.fragments;
 
+import com.espol.contacts.domain.entity.Company;
 import com.espol.contacts.domain.entity.Contact;
 import com.espol.contacts.domain.entity.Person;
 import javafx.event.ActionEvent;
@@ -70,6 +71,11 @@ public class SearchField extends HBox {
                             ((Person) contact).getLastName() != null &&
                             ((Person) contact).getLastName().toLowerCase().contains(finalValue);
                     break;
+                case "industria":
+                    specificPredicate = contact -> contact instanceof Company &&
+                            ((Company) contact).getIndustry() != null &&
+                            ((Company) contact).getIndustry().toString().toLowerCase().contains(finalValue);
+                    break;
                 case "tipo":
                     specificPredicate = contact -> contact.getContactType().name().toLowerCase().contains(finalValue);
                     break;
@@ -89,9 +95,10 @@ public class SearchField extends HBox {
                     specificPredicate = contact -> contact.getAddresses().stream()
                             .anyMatch(address -> address.toString().toLowerCase().contains(finalValue));
                     break;
-//                case "notas":
-//                    specificPredicate = contact -> contact.getNotes() contact.getNotes().contains(finalValue);
-//                    break;
+                case "notas":
+                    specificPredicate = contact -> contact.getNotes() != null &&
+                            contact.getNotes().toLowerCase().contains(finalValue);
+                    break;
                 case "fecha":
                     specificPredicate = contact -> {
                         if (contact.getDates().isEmpty()) return false; // No tiene fechas, no coincide
@@ -102,22 +109,6 @@ public class SearchField extends HBox {
                             LocalDate searchDate = LocalDate.parse(finalValue, java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                             return contact.getDates().stream().anyMatch(d -> d.getDate().equals(searchDate));
                         } catch (DateTimeParseException e) {}
-
-                        // Intentar parsear como mes (nombre completo o abreviado)
-                        try {
-                            // Buscar por nombre de mes (ej. "febrero")
-                            // Convierte el nombre del mes a un objeto Month
-                            Month searchMonth = Month.valueOf(finalValue.toUpperCase()); // "FEBRERO"
-                            return contact.getDates().stream().anyMatch(d -> d.getDate().getMonth() == searchMonth);
-                        } catch (IllegalArgumentException e) {}
-
-                        // Intentar parsear como número de día
-                        try {
-                            int searchDay = Integer.parseInt(finalValue);
-                            if (searchDay >= 1 && searchDay <= 31) { // Validar rango de día
-                                return contact.getDates().stream().anyMatch(d -> d.getDate().getDayOfMonth() == searchDay);
-                            }
-                        } catch (NumberFormatException e) {}
 
                         return false; // Si no coincide con ninguno de los formatos
                     };
