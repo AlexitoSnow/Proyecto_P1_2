@@ -1,5 +1,6 @@
 package com.espol.contacts.ui.screens.home;
 
+import com.espol.contacts.config.SessionManager;
 import com.espol.contacts.config.constants.Constants;
 import com.espol.contacts.config.router.AppRouter;
 import com.espol.contacts.config.router.Routes;
@@ -14,6 +15,7 @@ import com.espol.contacts.domain.repository.ContactsRepository;
 import com.espol.contacts.infrastructure.repository.ContactsRepositoryImpl;
 import com.espol.contacts.infrastructure.repository.UsersRepositoryImpl;
 import com.espol.contacts.ui.fragments.ExtraInfoView;
+import com.espol.contacts.ui.fragments.HelpDialog;
 import com.espol.contacts.ui.screens.Initializer;
 import com.espol.contacts.ui.screens.home.fragments.ContactCell;
 import com.espol.contacts.ui.screens.home.fragments.ContactView;
@@ -22,13 +24,11 @@ import com.espol.contacts.ui.screens.home.fragments.SearchField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 import java.util.Comparator;
 import java.util.ListIterator;
@@ -41,13 +41,15 @@ public class HomeScreen implements Initializer, Observer<Contact> {
     @FXML
     public MenuButton createButton;
     @FXML
+    public Label userLabel;
+    @FXML
     private VBox contactsListView;
     @FXML
     private ChoiceBox<String> showButton;
     @FXML
     private BorderPane mainPane;
     @FXML
-    private Text countLabel;
+    private Label countLabel;
     @FXML
     private VBox navigationRow;
     @FXML
@@ -57,6 +59,7 @@ public class HomeScreen implements Initializer, Observer<Contact> {
 
     private final ContactsRepository repository;
     private List<Contact> allContactsData;
+    private List<Contact> filtered;
     private Predicate<Contact> currentFilterPredicate;
     private Predicate<Contact> currentSearchPredicate;
     private Comparator<Contact> currentSortComparator;
@@ -74,15 +77,15 @@ public class HomeScreen implements Initializer, Observer<Contact> {
 
     @Override
     public void initialize(Map<String, Object> params) {
+        userLabel.setText("Libreta de " + SessionManager.getInstance().getCurrentUser().getUsername());
+
         navigationRow.setVisible(false);
         navigationRow.setManaged(false);
 
         searchField.setOnSearch((predicate) -> {
             currentSearchPredicate = predicate;
-            displayContacts(true);
+            updateContactList(true);
         });
-
-        displayContacts(true);
 
         mainPane.setCenter(new EmptyLabel());
 
@@ -101,7 +104,7 @@ public class HomeScreen implements Initializer, Observer<Contact> {
                     menuItem.setOnAction(e -> {
                         currentSortComparator = comparator;
                         sortButton.setText("Ordenar por: " + name);
-                        displayContacts(true);
+                        updateContactList(true);
                     });
                     sortButton.getItems().add(menuItem);
                 }
@@ -110,28 +113,31 @@ public class HomeScreen implements Initializer, Observer<Contact> {
         sortButton.setText("Selecciona un criterio de ordenación");
 
         if (params != null && params.get("index") != null) {
-            selectContactByIndex((Integer) params.get("index"));
+            selectedIndex = (Integer) params.get("index");
         }
+
+        updateContactList(selectedIndex == null);
     }
 
-    private void displayContacts(boolean clearSelection) {
+    private void updateContactList(boolean clearSelection) {
         Platform.runLater(() -> {
             contactsListView.getChildren().clear();
 
-            List<Contact> filtered = FilterSorterList.filterAndSort(
+            filtered = FilterSorterList.filterAndSort(
                     allContactsData,
                     currentFilterPredicate,
                     currentSearchPredicate,
                     currentSortComparator
             );
 
-            if (!filtered.isEmpty()) contactIterator = filtered.listIterator();
-
             filtered.forEach(contact -> {
                 ContactCell contactCell = new ContactCell(contact);
                 contactCell.setOnMouseClicked(event -> {
                     int i = contactsListView.getChildren().indexOf(contactCell);
-                    selectContactByIndex(i);
+                    if (filtered != null && !filtered.isEmpty()) {
+                        contactIterator = filtered.listIterator(i);
+                    }
+                    updateSelection();
                 });
                 contactsListView.getChildren().add(contactCell);
             });
@@ -139,7 +145,8 @@ public class HomeScreen implements Initializer, Observer<Contact> {
             if (clearSelection || contactsListView.getChildren().isEmpty()) {
                 clearSelection();
             } else if (selectedIndex != null) {
-                selectContactByIndex(selectedIndex);
+                contactIterator = filtered.listIterator(selectedIndex);
+                updateSelection();
             }
             updateCount();
         });
@@ -149,7 +156,6 @@ public class HomeScreen implements Initializer, Observer<Contact> {
         selectedIndex = null;
         selectedCell = null;
         mainPane.setCenter(new EmptyLabel());
-        mainPane.setRight(null);
         navigationRow.setVisible(false);
         navigationRow.setManaged(false);
     }
@@ -162,7 +168,7 @@ public class HomeScreen implements Initializer, Observer<Contact> {
         } else {
             currentFilterPredicate = c -> c.getContactType() == ContactType.valueOf(text.substring(0, text.length() - 1));
         }
-        displayContacts(true);
+        updateContactList(true);
         Platform.runLater(this::updateCount);
     }
 
@@ -176,8 +182,7 @@ public class HomeScreen implements Initializer, Observer<Contact> {
         Platform.runLater(() -> {
             if (contactIterator != null && contactIterator.hasNext()) {
                 contactIterator.next();
-                int idx = contactIterator.previousIndex();
-                selectContactByIndex(idx);
+                updateSelection();
             }
         });
     }
@@ -187,39 +192,44 @@ public class HomeScreen implements Initializer, Observer<Contact> {
         Platform.runLater(() -> {
             if (contactIterator != null && contactIterator.hasPrevious()) {
                 contactIterator.previous();
-                int idx = contactIterator.nextIndex();
-                selectContactByIndex(idx);
+                updateSelection();
             }
         });
     }
 
-    private void selectContactByIndex(int idx) {
+    private void updateSelection() {
         Platform.runLater(() -> {
             if (selectedCell != null) selectedCell.setSelected(false);
-
-            selectedIndex = idx;
-            selectedCell = (ContactCell) contactsListView.getChildren().get(idx);
+            selectedIndex = contactIterator.nextIndex();
+            selectedCell = (ContactCell) contactsListView.getChildren().get(selectedIndex);
             selectedCell.setSelected(true);
 
-            Contact contact = selectedCell.getContact();
-            ContactView contactView;
-            ExtraInfoView rightPane = new ExtraInfoView(contact, false);
-            if (contact.getContactType() == ContactType.Persona) {
-                contactView = ContactView.builder().personBuilder((Person) contact).build();
-            } else {
-                contactView = ContactView.builder().companyBuilder((Company) contact).build();
-            }
-            ScrollPane centerPane = new ScrollPane();
-            centerPane.setFitToHeight(true);
-            centerPane.setFitToWidth(true);
-            centerPane.setContent(contactView);
-            mainPane.setCenter(centerPane);
-            mainPane.setRight(rightPane);
-            navigationRow.setVisible(true);
-            navigationRow.setManaged(true);
-            final String text = String.format("Contacto %d de %d", selectedIndex + 1, contactsListView.getChildren().size());
-            countLabel.setText(text);
+            showContactDetails();
         });
+    }
+
+    private void showContactDetails() {
+        Contact contact = selectedCell.getContact();
+        ContactView contactView;
+        HBox detailsPane = new HBox();
+        ExtraInfoView rightPane = new ExtraInfoView(contact, false);
+        if (contact.getContactType() == ContactType.Persona) {
+            contactView = ContactView.builder().personBuilder((Person) contact).build();
+        } else {
+            contactView = ContactView.builder().companyBuilder((Company) contact).build();
+        }
+        ScrollPane centerPane = new ScrollPane();
+        centerPane.setFitToHeight(true);
+        centerPane.setFitToWidth(true);
+        centerPane.setPrefWidth(400);
+        centerPane.setContent(contactView);
+        detailsPane.getChildren().addAll(centerPane, rightPane);
+        HBox.setHgrow(rightPane, Priority.ALWAYS);
+        mainPane.setCenter(detailsPane);
+        navigationRow.setVisible(true);
+        navigationRow.setManaged(true);
+        final String text = String.format("Contacto %d de %d", selectedIndex + 1, contactsListView.getChildren().size());
+        countLabel.setText(text);
     }
 
     @FXML
@@ -229,12 +239,21 @@ public class HomeScreen implements Initializer, Observer<Contact> {
         AppRouter.setRoot(Routes.LOGIN);
     }
 
+    @FXML
+    void showHelp(ActionEvent event) {
+        HelpDialog helpDialog = new HelpDialog();
+        final Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Guía de Usuario");
+        dialog.setDialogPane(helpDialog);
+        dialog.showAndWait();
+    }
+
     @Override
     public void update(Contact contact) {
         LOGGER.info("ContactsRepository updated, refreshing contacts list.");
         Platform.runLater(() -> {
             allContactsData = repository.getAll();
-            displayContacts(contact == null);
+            updateContactList(contact == null);
         });
     }
 }
